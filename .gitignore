@@ -2,3 +2,4 @@
 Note.md
 test*
 **/__pycache__
+*.csv
