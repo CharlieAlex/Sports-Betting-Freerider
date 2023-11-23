@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 import pandas as pd
+from io import StringIO
 import random
 
 user_agent = UserAgent()
@@ -62,25 +63,6 @@ class Rank_user:
         print('向使用者頁面發送爬蟲要求!')
         return requests.get(url=self.user_data.linkUrl, headers=self.header).text
 
-    # @property
-    # def prediction1(self)->pd.DataFrame:
-    #     game_list = self.html_content.find_all('td', class_='index-prediction-game')
-    #     pred_list = self.html_content.find_all('td', class_='index-prediction-team')
-
-    #     df = pd.DataFrame()
-    #     for i in range(len(game_list)):
-    #         team1 = game_list[i].text.split('VS')[0].strip()
-    #         team2 = game_list[i].text.split('VS')[1].strip()
-    #         win_team = pred_list[i].contents[0].strip()
-    #         win_pred = pred_list[i].contents[1].text
-    #         df = df._append({
-    #             'team1': team1,
-    #             'team2': team2,
-    #             'win_team': win_team,
-    #             'win_prediction': win_pred
-    #             }, ignore_index=True)
-    #     return df
-
     def is_main_push(self, ls:list):
         str_ = ''.join(str(i) for i in ls)
         if re.search(r'\b主推\b', str_):
@@ -99,36 +81,40 @@ class Rank_user:
 
     @property
     def prediction(self)->pd.DataFrame:
+        is_paid = self.html_content.find('a', class_='buypredictbt iframe')
         game_list = self.html_content.find_all('td', rowspan='1')[1::2]
         pred_list = self.html_content.find_all('td', class_='managerpredictcon')
-        pred_num = len(pred_list)
+        pred_num = len(game_list)
         game_mode_list = [i.text for i in self.html_content.find_all('th', {'class': 'gameevent'})]
-
         df = pd.DataFrame()
-        try:
-            for i in range(pred_num):
-                team1 = game_list[i].find_all('th')[0].text.strip()
-                team2 = game_list[i].find_all('th')[1].text.strip()
-                win_team = pred_list[i].contents[0].strip()
-                win_pred = pred_list[i].contents[1].text
-                main_push = self.is_main_push(pred_list[i])
-                game_mode = self.compute_game_mode(i, pred_num, game_mode_list)
-                df = df._append({
-                    'userid': self.user_data.userid,
-                    'nickname': self.user_data.nickname,
-                    'team1': team1,
-                    'team2': team2,
-                    'win_team': win_team,
-                    'win_prediction': win_pred,
-                    'main_push': main_push,
-                    'game_mode': game_mode,
-                    }, ignore_index=True)
-        except IndexError:
+
+        if is_paid:
             print(f'{self.user_data.userid} 無免費預測...')
-        except Exception as e:
-            print(e)
-            print(f'未知錯誤請查看以下網址: {self.user_data.linkUrl}!')
-        return df
+            return df
+        else:
+            try:
+                for i in range(pred_num):
+                    team1 = game_list[i].find_all('th')[0].text.strip()
+                    team2 = game_list[i].find_all('th')[1].text.strip()
+                    win_team = pred_list[i].contents[0].strip()
+                    win_pred = pred_list[i].contents[1].text
+                    main_push = self.is_main_push(pred_list[i])
+                    game_mode = self.compute_game_mode(i, pred_num, game_mode_list)
+                    df = df._append({
+                        'userid': self.user_data.userid,
+                        'nickname': self.user_data.nickname,
+                        'team1': team1,
+                        'team2': team2,
+                        'win_team': win_team,
+                        'win_prediction': win_pred,
+                        'main_push': main_push,
+                        'game_mode': game_mode,
+                        }, ignore_index=True)
+                print(f'{self.user_data.userid} 預測蒐集完畢...')
+            except Exception as e:
+                print(e)
+                print(f'未知錯誤請查看此人網址: {self.user_data.linkUrl}')
+            return df
 
 if __name__ == '__main__':
     from datetime import date
