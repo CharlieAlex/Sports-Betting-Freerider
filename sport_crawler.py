@@ -12,42 +12,34 @@ import random
 user_agent = UserAgent()
 
 class Leaderboard:
-    def __init__(self, during, alliance):
+    def __init__(self, alliance, during):
         self.web_url = 'https://www.playsport.cc/'
-        self.during = during
         self.alliance = alliance
+        self.during = during
+        self.board_url = self.web_url + f'billboard/mainPrediction?during={during}&allianceid={alliance}'
         self.header = {'User-Agent':user_agent.random, 'Referer': random.choice(back_links)}
         self.html_content = BeautifulSoup(self.crawl_content, 'html.parser')
-
-    @property
-    def list_url(self):
-        return self.web_url + f'billboard/mainPrediction?during={self.during}&allianceid={self.alliance}'
 
     @cached_property
     def crawl_content(self):
         print('向排行榜發送爬蟲要求!')
-        return requests.get(url=self.list_url, headers=self.header).text
+        return requests.get(url=self.board_url, headers=self.header).text
 
     @property
-    def list_json(self):
+    def board_json(self):
         target_content = self.html_content.find_all('script')[13].string
         results = re.search('var vueData = (\{.*\});', target_content)[1]
         return json.loads(results)
 
     @property
-    def global_ranks(self):
-        return self.list_json['rankers']['1']
-
-    @property
-    def taiwan_ranks(self):
-        return self.list_json['rankers']['2']
-
-    @property
     def dataframe(self):
+        global_ranks = self.board_json['rankers']['1']
+        taiwan_ranks = self.board_json['rankers']['2']
         df = pd.DataFrame()
-        for i in range(len(self.global_ranks)):
-            df = df._append(self.global_ranks[i], ignore_index=True)
-            df = df._append(self.taiwan_ranks[i], ignore_index=True)
+        for i in range(len(global_ranks)):
+            df = df._append(global_ranks[i], ignore_index=True)
+            df = df._append(taiwan_ranks[i], ignore_index=True)
+        df.replace({'mode': {1: '運彩盤賽事', 2: '國際盤賽事'}}, inplace=True)
         df['linkUrl'] = self.web_url + '//' + df['linkUrl']
         return df
 
@@ -63,72 +55,59 @@ class Rank_user:
         print('向使用者頁面發送爬蟲要求!')
         return requests.get(url=self.user_data.linkUrl, headers=self.header).text
 
-    def is_main_push(self, ls:list):
-        str_ = ''.join(str(i) for i in ls)
-        if re.search(r'\b主推\b', str_):
-            return True
-        else:
-            return False
-
-    def compute_game_mode(self, i:int, pred_num:int, game_mode:list):
-        if len(game_mode) == 1:
-            return game_mode[0]
-        else:
-            if i < pred_num/2:
-                return game_mode[0]
-            else:
-                return game_mode[1]
-
     @property
     def prediction(self)->pd.DataFrame:
-        is_paid = self.html_content.find('a', class_='buypredictbt iframe')
-        game_list = self.html_content.find_all('td', rowspan='1')[1::2]
-        pred_list = self.html_content.find_all('td', class_='managerpredictcon')
-        pred_num = len(game_list)
-        game_mode_list = [i.text for i in self.html_content.find_all('th', {'class': 'gameevent'})]
-        df = pd.DataFrame()
+        def clean_table(table):
+            mode = table.columns[0]
+            table = table.iloc[:, 1:-1].copy()
+            table.columns = ['game', 'prediction']
+            table['userid'] = self.user_data.userid
+            table['nickname'] = self.user_data.nickname
+            table['mode'] = mode
+            return table[['userid', 'nickname', 'mode', 'game', 'prediction']]
 
+        def is_main_push(pred_list):
+            main_push_list = []
+            for game in range(len(pred_list)):
+                str_ = ''.join(str(i) for i in pred_list[game])
+                if re.search(r'\b主推\b', str_):
+                    main_push_list.append(True)
+                else:
+                    main_push_list.append(False)
+            return main_push_list
+
+        tablebox = pd.DataFrame()
+        is_paid = self.html_content.find('a', class_='buypredictbt iframe')
         if is_paid:
-            print(f'{self.user_data.userid} 無免費預測...')
-            return df
+            print(f'{self.user_data.nickname} 無免費預測...')
         else:
             try:
-                for i in range(pred_num):
-                    team1 = game_list[i].find_all('th')[0].text.strip()
-                    team2 = game_list[i].find_all('th')[1].text.strip()
-                    win_team = pred_list[i].contents[0].strip()
-                    win_pred = pred_list[i].contents[1].text
-                    main_push = self.is_main_push(pred_list[i])
-                    game_mode = self.compute_game_mode(i, pred_num, game_mode_list)
-                    df = df._append({
-                        'userid': self.user_data.userid,
-                        'nickname': self.user_data.nickname,
-                        'team1': team1,
-                        'team2': team2,
-                        'win_team': win_team,
-                        'win_prediction': win_pred,
-                        'main_push': main_push,
-                        'game_mode': game_mode,
-                        }, ignore_index=True)
-                print(f'{self.user_data.userid} 預測蒐集完畢...')
+                tables = pd.read_html(StringIO(self.crawl_content))
+                prediction_list = self.html_content.find_all('td', class_='managerpredictcon')
+                for table in tables:
+                    if table.columns[0] == '國際盤賽事':
+                        universe_tablebox = clean_table(table)
+                    elif table.columns[0] == '運彩盤賽事':
+                        bank_tablebox = clean_table(table)
+                    else:
+                        pass
+                tablebox = pd.concat([universe_tablebox, bank_tablebox], ignore_index=True)
+                tablebox['main_push'] = is_main_push(prediction_list)
+                print(f'{self.user_data.nickname} 預測蒐集完畢...')
             except Exception as e:
                 print(e)
                 print(f'未知錯誤請查看此人網址: {self.user_data.linkUrl}')
-            return df
+        return tablebox
 
 if __name__ == '__main__':
-    from datetime import date
-
     target = 'NBA'
     during = 'lastmonth'
-    today = date.today().strftime("%Y%m%d")
-    rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
 
-    rank_list = Leaderboard(during, alliance_dict[target])
+    rank_list = Leaderboard(alliance_dict[target], during)
     leaderboard = rank_list.dataframe
     print(leaderboard.head())
 
     all_prediction = pd.DataFrame()
-    user = Rank_user(leaderboard.iloc[10])
+    user = Rank_user(leaderboard.iloc[0])
     all_prediction = pd.concat([all_prediction, user.prediction])
     print(all_prediction.head())
