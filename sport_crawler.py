@@ -23,7 +23,10 @@ class Leaderboard:
     @cached_property
     def crawl_content(self):
         print('向排行榜發送爬蟲要求!')
-        return requests.get(url=self.board_url, headers=self.header).text
+        r = requests.get(url=self.board_url, headers=self.header)
+        if r.status_code == 403:
+            print('IP被ban了, GG...')
+        return r.text
 
     @property
     def board_json(self):
@@ -53,7 +56,10 @@ class Rank_user:
     @cached_property
     def crawl_content(self):
         print('向使用者頁面發送爬蟲要求!')
-        return requests.get(url=self.user_data.linkUrl, headers=self.header).text
+        r = requests.get(url=self.user_data.linkUrl, headers=self.header)
+        if r.status_code == 403:
+            print('IP被ban了, GG...')
+        return r.text
 
     @property
     def prediction(self)->pd.DataFrame:
@@ -64,6 +70,7 @@ class Rank_user:
             table['userid'] = self.user_data.userid
             table['nickname'] = self.user_data.nickname
             table['mode'] = mode
+            table = table[table['game'] != '無預測']
             return table[['userid', 'nickname', 'mode', 'game', 'prediction']]
 
         def is_main_push(pred_list):
@@ -77,26 +84,27 @@ class Rank_user:
             return main_push_list
 
         tablebox = pd.DataFrame()
-        is_paid = self.html_content.find('a', class_='buypredictbt iframe')
-        if is_paid:
-            print(f'{self.user_data.nickname} 無免費預測...')
-        else:
-            try:
-                tables = pd.read_html(StringIO(self.crawl_content))
-                prediction_list = self.html_content.find_all('td', class_='managerpredictcon')
-                for table in tables:
-                    if table.columns[0] == '國際盤賽事':
-                        universe_tablebox = clean_table(table)
-                    elif table.columns[0] == '運彩盤賽事':
-                        bank_tablebox = clean_table(table)
-                    else:
-                        pass
+        try:
+            tables = pd.read_html(StringIO(self.crawl_content))
+            prediction_list = self.html_content.find_all('td', class_='managerpredictcon')
+            universe_tablebox, bank_tablebox = pd.DataFrame(), pd.DataFrame()
+            for table in tables:
+                if table.columns[0] == '國際盤賽事':
+                    universe_tablebox = clean_table(table)
+                elif table.columns[0] == '運彩盤賽事':
+                    bank_tablebox = clean_table(table)
+                else:
+                    pass
+            if universe_tablebox.shape[0] != 0 or bank_tablebox.shape[0] != 0:
                 tablebox = pd.concat([universe_tablebox, bank_tablebox], ignore_index=True)
                 tablebox['main_push'] = is_main_push(prediction_list)
                 print(f'{self.user_data.nickname} 預測蒐集完畢...')
-            except Exception as e:
-                print(e)
-                print(f'未知錯誤請查看此人網址: {self.user_data.linkUrl}')
+            else:
+                tablebox = pd.DataFrame()
+                print(f'{self.user_data.nickname} 無免費預測...')
+        except Exception as e:
+            print(e)
+            print(f'未知錯誤請查看{self.user_data.nickname}的網址: {self.user_data.linkUrl}')
         return tablebox
 
 if __name__ == '__main__':
