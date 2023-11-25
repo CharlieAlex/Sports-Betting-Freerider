@@ -40,3 +40,4 @@ if __name__ == '__main__':
     output = Output_maker(leaderboard, all_prediction)
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
+    print('爬蟲完畢!')
