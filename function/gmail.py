@@ -21,7 +21,15 @@ class Gmail_machine:
         os.chdir(workdata_path)
         return (pd
             .read_csv(f'total_{self.target}_{self.during}.csv')
-            .head(5)
+            .to_html(index=False)
+            .replace('\n', '')
+        )
+
+    @property
+    def mainpush_pred_table(self):
+        os.chdir(workdata_path)
+        return (pd
+            .read_csv(f'mainpush_{self.target}_{self.during}.csv')
             .to_html(index=False)
             .replace('\n', '')
         )
@@ -34,13 +42,26 @@ class Gmail_machine:
                 <body>
                     <p>
                     Hey, Bro!<br>
-                    I am your bro.<br>
-                    Here is the predicition you want.<br>
-                    Please check the attachment.<br>
+                    今天的預測來摟！<br>
+                    <br>
+                    <br>
+                    以下是只計算主推的預測結果：<br>
+                    {self.mainpush_pred_table}
+                    <br>
+                    <br>
+                    以下是所有人的預測結果：<br>
+                    {self.total_pred_table}
+                    <br>
+                    <br>
+                    附件是抓到的原始數據。<br>
+                    <br>
+                    <br>
+                    <br>
+                    Best Regards,<br>
+                    Your Bro<br>
                     </p>
                 </body>
                 </html>
-                {self.total_pred_table}
             '''
         return MIMEText(str_, "html", "utf-8")
 
@@ -57,11 +78,11 @@ class Gmail_machine:
         msg.attach(self.mail_content)
 
         os.chdir(rawdata_path)
-        msg.attach(self.mail_attach(f'leaderboard_{self.target}_{self.during}.csv'))
         msg.attach(self.mail_attach(f'prediction_{self.target}_{self.during}.csv'))
-        os.chdir(workdata_path)
-        msg.attach(self.mail_attach(f'mainpush_{self.target}_{self.during}.csv'))
-        msg.attach(self.mail_attach(f'total_{self.target}_{self.during}.csv'))
+        # msg.attach(self.mail_attach(f'leaderboard_{self.target}_{self.during}.csv'))
+        # os.chdir(workdata_path)
+        # msg.attach(self.mail_attach(f'mainpush_{self.target}_{self.during}.csv'))
+        # msg.attach(self.mail_attach(f'total_{self.target}_{self.during}.csv'))
         return msg
 
     def send_mail(self, receiver_account):
@@ -75,5 +96,4 @@ if __name__ == '__main__':
     target = 'NBA'
     during = date.today().strftime("%Y%m%d")
     gmail_machine = Gmail_machine(target, during)
-    gmail_machine.send_mail(receiver_account='asdfghjkl12345zz6@gmail.com')
-    gmail_machine.send_mail(receiver_account='ffds0101@gmail.com')
+    gmail_machine.send_mail('asdfghjkl12345zz6@gmail.com')
