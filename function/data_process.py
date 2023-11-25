@@ -29,14 +29,14 @@ class Output_maker:
         df['count'] = 1
         df['game'] = df['game'].str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
         df['prediction'] = df['prediction'].apply(lambda x: re.sub(r'\d.', '', x))
+        df['prediction'] = df['prediction'].apply(lambda x: re.sub(r'[贏輸]%', '', x))
         df = df.groupby(['game', 'prediction'])[['count']].count().sort_values(['count'], ascending=False).reset_index()
         df = df[df['game'] != '無預測']
         return df
 
 if __name__ == '__main__':
     from datetime import date
-    rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
-    workdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/workdata'
+    from config import rawdata_path, workdata_path
     target = 'NBA'
     today = date.today().strftime("%Y%m%d")
 

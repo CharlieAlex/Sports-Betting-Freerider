@@ -69,9 +69,10 @@ class Rank_user:
             table.columns = ['game', 'prediction']
             table['userid'] = self.user_data.userid
             table['nickname'] = self.user_data.nickname
+            table['rank'] = self.user_data.rank
             table['mode'] = mode
             table = table[table['game'] != '無預測']
-            return table[['userid', 'nickname', 'mode', 'game', 'prediction']]
+            return table[['userid', 'nickname', 'rank', 'mode', 'game', 'prediction']]
 
         def is_main_push(pred_list):
             main_push_list = []
