@@ -1,6 +1,7 @@
-from sport_crawler import Leaderboard, Rank_user
-from data_process import Output_maker
-from config import alliance_dict
+from function.sport_crawler import Leaderboard, Rank_user
+from function.data_process import Output_maker
+from function.gmail import Gmail_machine
+from config import rawdata_path, workdata_path, alliance_dict
 import pandas as pd
 from tqdm import trange
 import time
@@ -10,8 +11,6 @@ from datetime import date
 target = 'NBA'
 during = 'thismonth'
 today = date.today().strftime("%Y%m%d")
-rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
-workdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/workdata'
 
 if __name__ == '__main__':
     #獲得排行榜數據
@@ -41,3 +40,8 @@ if __name__ == '__main__':
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
     print('爬蟲完畢!')
+
+    #寄送郵件
+    gmail_machine = Gmail_machine(target, during)
+    gmail_machine.send_mail(receiver_account='asdfghjkl12345zz6@gmail.com')
+    gmail_machine.send_mail(receiver_account='b86923b@gmail.com')

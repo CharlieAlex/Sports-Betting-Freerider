@@ -1,3 +1,6 @@
+rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
+workdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/workdata'
+
 back_links = [
     '','','','','','',
     'https://www.cakeresume.com/companies/playsport-cc',
