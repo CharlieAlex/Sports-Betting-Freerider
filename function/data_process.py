@@ -27,7 +27,7 @@ class Output_maker:
     def total_summary(self):
         df = self.merge_df[self.is_mode].copy()
         df['count'] = 1
-        df['game'] = df['game'].str.replace(r'\s*\d+\s*分輸\d+%?\s*', '', regex=True)
+        df['game'] = df['game'].str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
         df['prediction'] = df['prediction'].apply(lambda x: re.sub(r'\d.', '', x))
         df = df.groupby(['game', 'prediction'])[['count']].count().sort_values(['count'], ascending=False).reset_index()
         df = df[df['game'] != '無預測']
@@ -37,12 +37,12 @@ if __name__ == '__main__':
     from datetime import date
     rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
     workdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/workdata'
-    target = 'EL'
+    target = 'NBA'
     today = date.today().strftime("%Y%m%d")
 
     os.chdir(rawdata_path)
-    prediction = pd.read_csv('prediction_EL_20231124.csv')
-    leaderboard = pd.read_csv('leaderboard_EL_20231124.csv')
+    prediction = pd.read_csv('prediction_NBA_20231125.csv')
+    leaderboard = pd.read_csv('leaderboard_NBA_20231125.csv')
 
     output = Output_maker(leaderboard, prediction)
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
