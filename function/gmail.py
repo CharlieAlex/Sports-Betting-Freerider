@@ -13,7 +13,7 @@ class Gmail_machine:
     def __init__(self, target, during):
         self.target = target
         self.during = during
-        self.sender_account = 'backupbbcolab123@gmail.com'
+        self.sender_account = os.getenv('Sender_Account')
         self.sender_password = os.getenv('Sport_Lottery_Password')
 
     @property
@@ -93,7 +93,9 @@ class Gmail_machine:
 
 if __name__ == '__main__':
     from datetime import date
+
     target = 'NBA'
     during = date.today().strftime("%Y%m%d")
+    test_account = os.getenv('Alex_Account')
     gmail_machine = Gmail_machine(target, during)
-    gmail_machine.send_mail('asdfghjkl12345zz6@gmail.com')
+    gmail_machine.send_mail(test_account)

@@ -2,6 +2,8 @@ from function.sport_crawler import Leaderboard, Rank_user
 from function.data_process import Output_maker
 from function.gmail import Gmail_machine
 from function.config import rawdata_path, workdata_path, alliance_dict
+import os
+from dotenv import load_dotenv
 import pandas as pd
 from tqdm import trange
 import time
@@ -49,7 +51,8 @@ if __name__ == '__main__':
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
 
     #寄送郵件
+    load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
     gmail_machine = Gmail_machine(target, during)
-    gmail_machine.send_mail('asdfghjkl12345zz6@gmail.com')
-    gmail_machine.send_mail('b86923b@gmail.com')
+    gmail_machine.send_mail(os.getenv('Alex_Account'))
+    gmail_machine.send_mail(os.getenv('Bro_Account'))
     print('寄送郵件完畢')
