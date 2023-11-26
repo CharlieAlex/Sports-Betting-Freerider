@@ -4,7 +4,7 @@ services:
   env: python
   repo: https://github.com/CharlieAlex/Sport_Lottery
   buildCommand: pip install -r requirements.txt
-  startCommand: gunicorn linebot:app
+  startCommand: gunicorn linebot_main:app
   plan: free
   autoDeploy: false
   envVars:
