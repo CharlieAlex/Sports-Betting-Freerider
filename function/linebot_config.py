@@ -15,7 +15,6 @@ load_dotenv('/etc/secrets/mail.env')
 # LINE Bot Info
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
-location_dict = ast.literal_eval(os.getenv('LOCATION_DICT'))
 
 # Default Function
 @app.route("/callback", methods=['POST'])
