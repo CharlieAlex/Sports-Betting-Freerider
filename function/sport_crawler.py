@@ -1,4 +1,4 @@
-from config import alliance_dict, back_links
+from .config import alliance_dict, back_links
 import requests
 from functools import cached_property
 from fake_useragent import UserAgent

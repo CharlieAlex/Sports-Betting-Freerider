@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     #寄送郵件
     load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
-    gmail_machine = Gmail_machine(target, during)
+    gmail_machine = Gmail_machine(target, today)
     gmail_machine.send_mail(os.getenv('Alex_Account'))
     gmail_machine.send_mail(os.getenv('Bro_Account'))
-    print('寄送郵件完畢')
+    print('寄送郵件完畢!')

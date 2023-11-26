@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from config import rawdata_path, workdata_path
+from .config import rawdata_path, workdata_path
 from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
