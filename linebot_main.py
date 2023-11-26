@@ -9,19 +9,19 @@ from linebot.models import (
 
 def linebot_main(target, during):
     print('開始爬蟲!')
-    # today = date.today().strftime("%Y%m%d")
-    # leaderboard, prediction = main(target, during)
-    # print('爬蟲完畢')
-    # output = Output_maker(leaderboard, prediction)
-    # data = {
-    #     'leaderboard': leaderboard,
-    #     'prediction': prediction,
-    #     'mainpush': output.mainpush_summary,
-    #     'total': output.total_summary
-    # }
-    # gmail_machine = Gmail_machine(target, today, data)
-    # gmail_machine.send_mail(os.getenv('Alex_Account'))
-    # gmail_machine.send_mail(os.getenv('Bro_Account'))
+    today = date.today().strftime("%Y%m%d")
+    leaderboard, prediction = main(target, during)
+    print('爬蟲完畢')
+    output = Output_maker(leaderboard, prediction)
+    data = {
+        'leaderboard': leaderboard,
+        'prediction': prediction,
+        'mainpush': output.mainpush_summary,
+        'total': output.total_summary
+    }
+    gmail_machine = Gmail_machine(target, today, data)
+    gmail_machine.send_mail(os.getenv('Alex_Account'))
+    gmail_machine.send_mail(os.getenv('Bro_Account'))
     print('寄送郵件完畢!')
 
 @handler.add(MessageEvent, message=TextMessage)
