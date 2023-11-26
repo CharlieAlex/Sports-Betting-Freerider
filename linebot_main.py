@@ -30,7 +30,7 @@ def echo_text(event):
     rm_list = received_message.split()
     try:
         if rm_list[0] == 'Start':
-            if rm_list[1] in alliance_dict.keys() & rm_list[2] in during_list:
+            if (rm_list[1] in alliance_dict.keys()) & (rm_list[2] in during_list):
                 linebot_main(rm_list[1], rm_list[2])
                 sent_message = TextSendMessage(text='已完成爬蟲，請前往收信')
             else:
