@@ -8,3 +8,4 @@ Flask
 line-bot-sdk
 gunicorn
 requests
+lxml
