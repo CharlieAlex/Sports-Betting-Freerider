@@ -19,3 +19,11 @@ alliance_dict = {
     'Soccer': '4',
     'Football': '93',
 }
+
+during_list = [
+    'lastmonth',
+    'thismonth',
+    'lastweek',
+    'thisweek',
+    'season',
+]

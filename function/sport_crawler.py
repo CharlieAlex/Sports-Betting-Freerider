@@ -67,9 +67,9 @@ class Rank_user:
             mode = table.columns[0]
             table = table.iloc[:, 1:-1].copy()
             table.columns = ['game', 'prediction']
-            table['userid'] = self.user_data.userid
-            table['nickname'] = self.user_data.nickname
-            table['rank'] = self.user_data.rank
+            table['userid'] = self.user_data['userid']
+            table['nickname'] = self.user_data['nickname']
+            table['rank'] = self.user_data['rank']
             table['mode'] = mode
             table = table[table['game'] != '無預測']
             return table[['userid', 'nickname', 'rank', 'mode', 'game', 'prediction']]
