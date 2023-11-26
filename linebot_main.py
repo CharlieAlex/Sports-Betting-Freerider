@@ -27,14 +27,14 @@ def linebot_main(target, during):
 @handler.add(MessageEvent, message=TextMessage)
 def echo_text(event):
     received_message = event.message.text
-    rm_list = received_message.split(',')
+    rm_list = received_message.split()
     try:
-        if rm_list[0] == 'start':
+        if rm_list[0] == 'Start':
             if rm_list[1] in alliance_dict.keys() & rm_list[2] in during_list:
                 linebot_main(rm_list[1], rm_list[2])
                 sent_message = TextSendMessage(text='已完成爬蟲，請前往收信')
             else:
-                sent_message = TextSendMessage(text='指令有誤，請重新輸入以下格式: start, target, during')
+                sent_message = TextSendMessage(text='指令有誤，請重新輸入以下格式: Start NBA thismonth')
         else:
             sent_message = StickerSendMessage(package_id='6359', sticker_id='11069851')
     except Exception as e:
