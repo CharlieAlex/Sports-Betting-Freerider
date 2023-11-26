@@ -1,0 +1,16 @@
+services:
+- type: web
+  name: Sport_Lottery
+  env: python
+  repo: https://github.com/CharlieAlex/Sport_Lottery
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn linebot:app
+  plan: free
+  autoDeploy: false
+  envVars:
+  - key: CHANNEL_ACCESS_TOKEN
+    sync: false
+  - key: CHANNEL_SECRET
+    sync: false
+  - key: TZ
+    sync: false

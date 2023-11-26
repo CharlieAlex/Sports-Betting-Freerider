@@ -10,11 +10,10 @@ import time
 import random
 from datetime import date
 
-def main(target, during, crawl_time):
+def main(target, during):
     #獲得排行榜數據
     rank_list = Leaderboard(alliance_dict[target], during)
     leaderboard = rank_list.dataframe
-    leaderboard.to_csv(f'{rawdata_path}/leaderboard_{target}_{crawl_time}.csv', index=False)
     leaderboard = leaderboard[leaderboard['mode'] == '國際盤賽事']
 
     #獲得國際盤排行榜上每一個人的預測數據
@@ -31,28 +30,36 @@ def main(target, during, crawl_time):
         if collected_count >= 15:
             break
         time.sleep(random.random()*15)
-    all_prediction.to_csv(f'{rawdata_path}/prediction_{target}_{crawl_time}.csv', index=False)
 
     return leaderboard, all_prediction
 
 
 if __name__ == '__main__':
+    load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
+
     #蒐集資料
     print('開始爬蟲!')
     target = 'NBA'
     during = 'thismonth'
     today = date.today().strftime("%Y%m%d")
-    leaderboard, all_prediction = main(target, during, today)
+    leaderboard, prediction = main(target, during)
+    leaderboard.to_csv(f'{rawdata_path}/leaderboard_{target}_{today}.csv', index=False)
+    prediction.to_csv(f'{rawdata_path}/prediction_{target}_{today}.csv', index=False)
     print('爬蟲完畢')
 
     #統計結果
-    output = Output_maker(leaderboard, all_prediction)
+    output = Output_maker(leaderboard, prediction)
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
 
     #寄送郵件
-    load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
-    gmail_machine = Gmail_machine(target, today)
+    data = {
+        'leaderboard': leaderboard,
+        'prediction': prediction,
+        'mainpush': output.mainpush_summary,
+        'total': output.total_summary
+    }
+    gmail_machine = Gmail_machine(target, today, data)
     gmail_machine.send_mail(os.getenv('Alex_Account'))
     gmail_machine.send_mail(os.getenv('Bro_Account'))
     print('寄送郵件完畢!')
