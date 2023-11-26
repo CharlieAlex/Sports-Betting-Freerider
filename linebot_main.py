@@ -1,7 +1,7 @@
 # Import Packages
 from function.config import *
 from function.linebot_config import *
-from .main import *
+from main import *
 from linebot.models import (
     MessageEvent, TextSendMessage,
     TextMessage, StickerSendMessage,
