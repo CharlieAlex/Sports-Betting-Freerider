@@ -1,4 +1,4 @@
-from .config import alliance_dict, back_links
+from .config import back_links
 import requests
 from functools import cached_property
 from fake_useragent import UserAgent
@@ -109,6 +109,7 @@ class Rank_user:
         return tablebox
 
 if __name__ == '__main__':
+    from .config import alliance_dict
     target = 'NBA'
     during = 'lastmonth'
 
