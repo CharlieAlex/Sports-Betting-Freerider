@@ -28,9 +28,9 @@ def linebot_main(target, during, target_num):
 def echo_text(event):
     received_message = event.message.text
     rm_list = received_message.split()
-    start_, target_, during_, target_num_ = rm_list[0], rm_list[1], rm_list[2], int(rm_list[3])
     try:
-        if start_ == 'Start':
+        if rm_list[0] == 'Start':
+            target_, during_, target_num_ = rm_list[1], rm_list[2], int(rm_list[3])
             if (target_ in alliance_dict.keys()) & (during_ in during_list):
                 linebot_main(target_, during_, target_num_)
                 sent_message = TextSendMessage(text='已完成爬蟲，請前往收信')
