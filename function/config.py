@@ -16,7 +16,15 @@ back_links = [
 alliance_dict = {
     'NBA': '3',
     'EL': '8',
+    'Korea': '92',
+    'China': '94',
+    'Japan': '97',
+    'Australia': '12',
+    'AusBaseball': '83',
     'Soccer': '4',
+    'NHL': '91',
+    'Russia': '87',
+    'Horse': '90',
     'Football': '93',
 }
 
