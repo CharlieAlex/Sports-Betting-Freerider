@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 
 class Output_maker:
@@ -45,6 +44,7 @@ class Output_maker:
             )
 
 if __name__ == '__main__':
+    import os
     from datetime import date
     from config import rawdata_path, workdata_path
     target = 'NBA'
