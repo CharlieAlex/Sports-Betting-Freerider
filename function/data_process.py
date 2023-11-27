@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import re
 
 class Output_maker:
     def __init__(self, leaderboard, prediction) -> None:
@@ -20,19 +19,30 @@ class Output_maker:
     def mainpush_summary(self):
         df = self.merge_df[self.is_mode & self.is_mainpush].copy()
         df['count'] = 1
-        df = df.groupby(['game', 'prediction'])[['count']].count().reset_index()
-        return df
+        return (df[['game', 'prediction', 'count']]
+            .groupby(['game', 'prediction']).count()
+            .sort_values(['count'], ascending=False)
+            .reset_index()
+            )
 
     @property
     def total_summary(self):
         df = self.merge_df[self.is_mode].copy()
         df['count'] = 1
-        df['game'] = df['game'].str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
-        df['prediction'] = df['prediction'].apply(lambda x: re.sub(r'\d.', '', x))
-        df['prediction'] = df['prediction'].apply(lambda x: re.sub(r'[贏輸]%', '', x))
-        df = df.groupby(['game', 'prediction'])[['count']].count().sort_values(['count'], ascending=False).reset_index()
-        df = df[df['game'] != '無預測']
-        return df
+        df['game'] = (df['game']
+            .str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
+            .str.strip()
+            .replace('無預測', pd.NA)
+            )
+        df['prediction'] = (df['prediction']
+            .str.replace(r'\d.|[贏輸%]', '', regex=True)
+            .str.strip()
+            )
+        return (df[['game', 'prediction', 'count']]
+            .groupby(['game', 'prediction']).count()
+            .sort_values(['count'], ascending=False)
+            .reset_index()
+            )
 
 if __name__ == '__main__':
     from datetime import date
