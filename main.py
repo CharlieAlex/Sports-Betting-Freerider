@@ -33,16 +33,24 @@ def main(target, during, target_num):
 
     return leaderboard, all_prediction
 
+def enter_command():
+    command_text = input('請輸入指令開始爬蟲(e.g. Start NBA thismonth 15):')
+    try:
+        command_list = command_text.split()
+        return command_list[1], command_list[2], int(command_list[3])
+    except Exception as e:
+        print(e)
+        return None, None, None
+
 
 if __name__ == '__main__':
     load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
 
     #蒐集資料
     print('開始爬蟲!')
-    target = 'NBA'
-    during = 'thismonth'
     today = date.today().strftime("%Y%m%d")
-    leaderboard, prediction = main(target, during, 15)
+    target, during, target_num = enter_command()
+    leaderboard, prediction = main(target, during, target_num)
     leaderboard.to_csv(f'{rawdata_path}/leaderboard_{target}_{today}.csv', index=False)
     prediction.to_csv(f'{rawdata_path}/prediction_{target}_{today}.csv', index=False)
     print('爬蟲完畢')
