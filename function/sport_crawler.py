@@ -42,7 +42,7 @@ class Leaderboard:
         for i in range(len(global_ranks)):
             df = df._append(global_ranks[i], ignore_index=True)
             df = df._append(taiwan_ranks[i], ignore_index=True)
-        df.replace({'mode': {1: '運彩盤賽事', 2: '國際盤賽事'}}, inplace=True)
+        df.replace({'mode': {1: '運彩盤賽事', 2: '國際盤賽事', '1': '運彩盤賽事', '2': '國際盤賽事'}}, inplace=True)
         df['linkUrl'] = self.web_url + '//' + df['linkUrl']
         return df
 
