@@ -9,8 +9,9 @@ from tqdm import trange
 import time
 import random
 from datetime import date
+import gc
 
-def main(target, during, target_num):
+def main(target, during, target_num, is_gc):
     #獲得排行榜數據
     rank_list = Leaderboard(alliance_dict[target], during)
     leaderboard = rank_list.dataframe
@@ -29,6 +30,8 @@ def main(target, during, target_num):
             print(e)
         if collected_count >= target_num:
             break
+        if is_gc:
+            gc.collect()
         time.sleep(random.random()*5)
 
     return leaderboard, all_prediction
@@ -50,7 +53,7 @@ if __name__ == '__main__':
     print('開始爬蟲!')
     today = date.today().strftime("%Y%m%d")
     target, during, target_num = enter_command()
-    leaderboard, prediction = main(target, during, target_num)
+    leaderboard, prediction = main(target, during, target_num, is_gc=False)
     leaderboard.to_csv(f'{rawdata_path}/leaderboard_{target}_{today}.csv', index=False)
     prediction.to_csv(f'{rawdata_path}/prediction_{target}_{today}.csv', index=False)
     print('爬蟲完畢')

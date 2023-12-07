@@ -10,7 +10,7 @@ from linebot.models import (
 def linebot_main(target, during, target_num):
     print('開始爬蟲!')
     today = date.today().strftime("%Y%m%d")
-    leaderboard, prediction = main(target, during, target_num)
+    leaderboard, prediction = main(target, during, target_num, is_gc=True)
     print('爬蟲完畢')
     output = Output_maker(leaderboard, prediction)
     data = {
