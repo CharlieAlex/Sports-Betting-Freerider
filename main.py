@@ -28,7 +28,7 @@ def main(target, during, target_num, is_gc):
             collected_count = collected_count + 1 if user.prediction.shape[0] > 0 else collected_count
         except Exception as e:
             print(e)
-        if collected_count >= target_num:
+        if collected_count >= int(target_num):
             break
         if is_gc:
             gc.collect()
