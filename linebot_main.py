@@ -13,7 +13,7 @@ def linebot_main(target, during, target_num, *mail_accounts):
     if (during not in during_list):
         return '資料時間範圍有誤，請輸入 help 查看指令格式'
     for account in mail_accounts:
-        if re.fullmatch(email_pattern, account):
+        if not re.fullmatch(email_pattern, account):
             return f'{account} 格式有誤，請輸入 help 查看指令格式'
     print('參數確認完畢')
 
