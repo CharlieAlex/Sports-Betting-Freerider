@@ -30,21 +30,20 @@ def time_template(command):
         'Soccer':'https://img1.wsimg.com/isteam/ip/062f8e95-2657-40ed-a40a-acb450331c62/8-20200926-IMG_5064.jpg/:/cr=t:26.49%25,l:33.91%25,w:64.94%25,h:48.72%25/rs=w:1240,h:620,cg:true,m',
         'NHL':'https://help.viaplay.com/wp-content/uploads/capture-3-1024x576.png',
     }
-    return (
-        TemplateSendMessage(
-            alt_text='ButtonsTemplate',
-            template=ButtonsTemplate(
-                thumbnail_image_url=img_url_dict[command],
-                title=command,
-                text='請選擇以下時間範圍',
-                actions=[
-                    MessageAction(label='上月', text=f'{command} lastmonth 30'),
-                    MessageAction(label='本月', text=f'{command} thismonth 30'),
-                    MessageAction(label='本週', text=f'{command} thisweek 30'),
-                ]
-            )
+    msg = TemplateSendMessage(
+        alt_text='ButtonsTemplate',
+        template=ButtonsTemplate(
+            thumbnail_image_url=img_url_dict[command],
+            title=command,
+            text='請選擇以下時間範圍',
+            actions=[
+                MessageAction(label='上月', text=f'{command} lastmonth 30'),
+                MessageAction(label='本月', text=f'{command} thismonth 30'),
+                MessageAction(label='本週', text=f'{command} thisweek 30'),
+            ]
         )
     )
+    return msg
 
 @handler.add(MessageEvent, message=TextMessage)
 def echo_text(event):
@@ -62,7 +61,7 @@ def echo_text(event):
                 資料範圍包含: lastmonth, thismonth, lastweek, thisweek, season。
                 爬取數量範圍: 1~30，如果有開放預測的人不足，則會爬取所有開放預測的人。
             ''')
-        elif (target in ('NBA', '足球', 'NHL冰球')) & (len(rm_list) == 1):
+        elif (target in ['NBA', '足球', 'NHL冰球']) & (len(rm_list) == 1):
             time_template(target)
             sent_message = ''
         elif (target in alliance_dict.keys()) & (len(rm_list) == 3):
