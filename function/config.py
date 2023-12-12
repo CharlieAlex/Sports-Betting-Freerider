@@ -50,3 +50,10 @@ img_url_dict = {
     '賽馬': 'https://flameracing.files.wordpress.com/2023/07/20230723_invisible_self.jpg?w=1200',
     '美式足球': 'https://news-data.pts.org.tw/news_images/512396/1612749030t.jpg',
 }
+
+help_text = '''請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量
+e.g. NBA thismonth 15
+目標包含: NBA, 歐洲職籃, 韓國職籃, 中國職籃, 日本職籃, 澳洲職籃, 澳洲職棒, 足球, NHL冰球, 俄羅斯冰球, 賽馬, 美式足球。
+資料範圍包含: lastmonth, thismonth, lastweek, thisweek, season。
+爬取數量範圍: 1~30，如果有開放預測的人不足，則會爬取所有開放預測的人。
+'''
