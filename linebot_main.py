@@ -25,11 +25,6 @@ def linebot_main(target, during, target_num):
     print('寄送郵件完畢!')
 
 def time_template(command):
-    img_url_dict = {
-        'NBA':'https://media.cnn.com/api/v1/images/stellar/prod/160204121559-nba-slam-dunk-23.jpg?q=x_4,y_0,h_1934,w_3437,c_crop/w_800',
-        'Soccer':'https://img1.wsimg.com/isteam/ip/062f8e95-2657-40ed-a40a-acb450331c62/8-20200926-IMG_5064.jpg/:/cr=t:26.49%25,l:33.91%25,w:64.94%25,h:48.72%25/rs=w:1240,h:620,cg:true,m',
-        'NHL':'https://help.viaplay.com/wp-content/uploads/capture-3-1024x576.png',
-    }
     msg = TemplateSendMessage(
         alt_text='ButtonsTemplate',
         template=ButtonsTemplate(
@@ -39,6 +34,7 @@ def time_template(command):
             actions=[
                 MessageAction(label='上月', text=f'{command} lastmonth 30'),
                 MessageAction(label='本月', text=f'{command} thismonth 30'),
+                MessageAction(label='上週', text=f'{command} lastweek 30'),
                 MessageAction(label='本週', text=f'{command} thisweek 30'),
             ]
         )
@@ -53,9 +49,8 @@ def echo_text(event):
 
     try:
         if target == 'HELP':
-            sent_message = TextSendMessage(text=
-                '''
-                請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量
+            sent_message = TextSendMessage(
+                text='''請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量
                 e.g. NBA thismonth 15
                 目標包含: NBA, 歐洲職籃, 韓國職籃, 中國職籃, 日本職籃, 澳洲職籃, 澳洲職棒, 足球, NHL冰球, 俄羅斯冰球, 賽馬, 美式足球。
                 資料範圍包含: lastmonth, thismonth, lastweek, thisweek, season。
@@ -70,7 +65,7 @@ def echo_text(event):
                 linebot_main(target, during_, target_num_)
                 sent_message = TextSendMessage(text='已完成爬蟲，請前往收信')
             else:
-                sent_message = TextSendMessage(text='指令有誤，請重新輸入以下格式: NBA thismonth 15')
+                sent_message = TextSendMessage(text='指令有誤，請輸入 help 查看指令格式')
         else:
             sent_message = StickerSendMessage(package_id='6359', sticker_id='11069851')
     except Exception as e:

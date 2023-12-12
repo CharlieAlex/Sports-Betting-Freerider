@@ -35,3 +35,18 @@ during_list = [
     'thisweek',
     'season',
 ]
+
+img_url_dict = {
+    'NBA':'https://media.cnn.com/api/v1/images/stellar/prod/160204121559-nba-slam-dunk-23.jpg?q=x_4,y_0,h_1934,w_3437,c_crop/w_800',
+    '歐洲職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '韓國職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '中國職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '日本職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '澳洲職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '澳洲職棒': 'https://m.thepeninsulaqatar.com/get/maximage/20230309_1678356344-391.jpeg?1678356344',
+    '足球':'https://img1.wsimg.com/isteam/ip/062f8e95-2657-40ed-a40a-acb450331c62/8-20200926-IMG_5064.jpg/:/cr=t:26.49%25,l:33.91%25,w:64.94%25,h:48.72%25/rs=w:1240,h:620,cg:true,m',
+    'NHL冰球':'https://help.viaplay.com/wp-content/uploads/capture-3-1024x576.png',
+    '俄羅斯冰球': 'https://static01.nyt.com/images/2016/11/08/sports/08KUNLUNWEB3/08KUNLUNWEB3-articleLarge.jpg',
+    '賽馬': 'https://flameracing.files.wordpress.com/2023/07/20230723_invisible_self.jpg?w=1200',
+    '美式足球': 'https://news-data.pts.org.tw/news_images/512396/1612749030t.jpg',
+}
