@@ -53,17 +53,17 @@ def echo_text(event):
 
     try:
         if target == 'HELP':
-            sent_message = TextSendMessage(text='''
+            sent_message = TextSendMessage(text=
+                '''
                 請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量
                 e.g. NBA thismonth 15
-
                 目標包含: NBA, 歐洲職籃, 韓國職籃, 中國職籃, 日本職籃, 澳洲職籃, 澳洲職棒, 足球, NHL冰球, 俄羅斯冰球, 賽馬, 美式足球。
                 資料範圍包含: lastmonth, thismonth, lastweek, thisweek, season。
                 爬取數量範圍: 1~30，如果有開放預測的人不足，則會爬取所有開放預測的人。
-            ''')
+                '''
+            )
         elif (target in ['NBA', '足球', 'NHL冰球']) & (len(rm_list) == 1):
-            time_template(target)
-            sent_message = ''
+            sent_message = time_template(target)
         elif (target in alliance_dict.keys()) & (len(rm_list) == 3):
             during_, target_num_ = rm_list[1], int(rm_list[2])
             if (during_ in during_list):
