@@ -39,8 +39,8 @@ during_list = [
 img_url_dict = {
     'NBA':'https://media.cnn.com/api/v1/images/stellar/prod/160204121559-nba-slam-dunk-23.jpg?q=x_4,y_0,h_1934,w_3437,c_crop/w_800',
     '歐洲職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
-    '韓國職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
-    '中國職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
+    '韓國職籃': 'https://www.rappler.com/tachyon/2022/12/rhenz-abando-december-18-20222.jpeg',
+    '中國職籃': 'https://news.cgtn.com/news/3d3d514f7a51444e34457a6333566d54/img/93a0a0eb0d2b491882b87983bd22919a/93a0a0eb0d2b491882b87983bd22919a.jpg',
     '日本職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
     '澳洲職籃': 'https://cdn.britannica.com/44/193844-131-1E4A9F84/ball-net-basketball-game-arena.jpg',
     '澳洲職棒': 'https://m.thepeninsulaqatar.com/get/maximage/20230309_1678356344-391.jpeg?1678356344',
@@ -51,9 +51,11 @@ img_url_dict = {
     '美式足球': 'https://news-data.pts.org.tw/news_images/512396/1612749030t.jpg',
 }
 
-help_text = '''請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量
-e.g. NBA thismonth 15
+help_text = '''請輸入以下格式進行爬蟲: 目標 資料範圍 爬取數量 郵件帳號1 郵件帳號2...
+e.g. NBA thismonth 15 aaa@gmail.com bbb@gmail.com
+
 目標包含: NBA, 歐洲職籃, 韓國職籃, 中國職籃, 日本職籃, 澳洲職籃, 澳洲職棒, 足球, NHL冰球, 俄羅斯冰球, 賽馬, 美式足球。
+
 資料範圍包含: lastmonth, thismonth, lastweek, thisweek, season。
-爬取數量範圍: 1~30，如果有開放預測的人不足，則會爬取所有開放預測的人。
-'''
+
+爬取數量範圍: 1~30，如果有開放預測的人不足，則會爬取所有開放預測的人。'''

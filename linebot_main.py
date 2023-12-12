@@ -44,7 +44,7 @@ def time_template(command):
         template=ButtonsTemplate(
             thumbnail_image_url=img_url_dict[command],
             title=command,
-            text='請選擇以下時間範圍',
+            text='請選擇主推榜時間範圍',
             actions=[
                 MessageAction(label='上月', text=f'{command} lastmonth 30'),
                 MessageAction(label='本月', text=f'{command} thismonth 30'),
@@ -70,7 +70,7 @@ def echo_text(event):
             elif (len(rm_list) >= 3):
                 result_text = linebot_main(*rm_list)
                 sent_message = TextSendMessage(text=result_text)
-        elif (target == 'HELP'):
+        elif (target == 'help'):
             sent_message = TextSendMessage(text=help_text)
         else:
             sent_message = StickerSendMessage(package_id='6359', sticker_id='11069851')
