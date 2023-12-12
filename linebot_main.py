@@ -2,12 +2,13 @@
 from function.config import *
 from function.linebot_config import *
 from main import *
+import re
 from linebot.models import (
     MessageEvent, TextSendMessage, TextMessage, StickerSendMessage,
     MessageAction, TemplateSendMessage, ButtonsTemplate,
     )
 
-def linebot_main(target, during, target_num):
+def linebot_main(target, during, target_num, *mail_accounts):
     print('開始爬蟲!')
     today = date.today().strftime("%Y%m%d")
     leaderboard, prediction = main(target, during, target_num, is_gc=True)
@@ -20,8 +21,14 @@ def linebot_main(target, during, target_num):
         'total': output.total_summary
     }
     gmail_machine = Gmail_machine(target, today, data)
-    gmail_machine.send_mail(os.getenv('Alex_Account'))
-    gmail_machine.send_mail(os.getenv('Bro_Account'))
+    email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if not mail_accounts:
+        gmail_machine.send_mail(os.getenv('Alex_Account'))
+        gmail_machine.send_mail(os.getenv('Bro_Account'))
+    else:
+        for account in mail_accounts:
+            if re.fullmatch(email_pattern, account):
+                gmail_machine.send_mail(account)
     print('寄送郵件完畢!')
 
 def time_template(command):
