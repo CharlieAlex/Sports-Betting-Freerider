@@ -36,12 +36,9 @@ class Leaderboard:
 
     @property
     def dataframe(self):
-        global_ranks = self.board_json['rankers']['1']
-        taiwan_ranks = self.board_json['rankers']['2']
-        df = pd.DataFrame()
-        for i in range(len(global_ranks)):
-            df = df._append(global_ranks[i], ignore_index=True)
-            df = df._append(taiwan_ranks[i], ignore_index=True)
+        taiwan_ranks = pd.DataFrame(self.board_json['rankers'].get('1', []))
+        global_ranks = pd.DataFrame(self.board_json['rankers'].get('2', []))
+        df = pd.concat([global_ranks, taiwan_ranks], ignore_index=True)
         df.replace({'mode': {1: '運彩盤賽事', 2: '國際盤賽事', '1': '運彩盤賽事', '2': '國際盤賽事'}}, inplace=True)
         df['linkUrl'] = self.web_url + '//' + df['linkUrl']
         return df
