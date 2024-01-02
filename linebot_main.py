@@ -30,6 +30,13 @@ def linebot_main(target, during, target_num, *mail_accounts):
     }
     print('資料整理完畢')
 
+    gmail_machine = Gmail_machine(target, today, data)
+    if not mail_accounts:
+        gmail_machine.send_mail(os.getenv('Bro_Account'))
+    else:
+        [gmail_machine.send_mail(account) for account in mail_accounts]
+    print('寄送郵件完畢')
+
     board_sheet, pred_sheet, total_sheet, mainpush_sheet = open_gsheet(
         key_path='/etc/secrets/sport-lottery-database.json',
         database_url=database_url,
@@ -40,11 +47,6 @@ def linebot_main(target, during, target_num, *mail_accounts):
     append_dataframe(data['total'], total_sheet, target)
     print('資料儲存完畢')
 
-    gmail_machine = Gmail_machine(target, today, data)
-    if not mail_accounts:
-        gmail_machine.send_mail(os.getenv('Bro_Account'))
-    else:
-        [gmail_machine.send_mail(account) for account in mail_accounts]
     return '已完成爬蟲，請前往收信'
 
 def time_template(command):

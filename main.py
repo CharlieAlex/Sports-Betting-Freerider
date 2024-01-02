@@ -64,14 +64,20 @@ if __name__ == '__main__':
     output = Output_maker(leaderboard, prediction)
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
-
-    #儲存資料
     data = {
         'leaderboard': leaderboard,
         'prediction': prediction,
         'mainpush': output.mainpush_summary,
         'total': output.total_summary
     }
+
+    #寄送郵件
+    gmail_machine = Gmail_machine(target, today, data)
+    gmail_machine.send_mail(os.getenv('Alex_Account'))
+    gmail_machine.send_mail(os.getenv('Bro_Account'))
+    print('寄送郵件完畢!')
+
+    #儲存資料
     board_sheet, pred_sheet, total_sheet, mainpush_sheet = open_gsheet(
         key_path='/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json',
         database_url=database_url,
@@ -81,9 +87,3 @@ if __name__ == '__main__':
     append_dataframe(data['mainpush'], mainpush_sheet, target)
     append_dataframe(data['total'], total_sheet, target)
     print('資料儲存完畢')
-
-    #寄送郵件
-    gmail_machine = Gmail_machine(target, today, data)
-    gmail_machine.send_mail(os.getenv('Alex_Account'))
-    gmail_machine.send_mail(os.getenv('Bro_Account'))
-    print('寄送郵件完畢!')
