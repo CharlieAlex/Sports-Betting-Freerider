@@ -3,6 +3,7 @@ fake_useragent
 pandas
 python-dotenv
 tqdm
+pygsheets
 
 Flask
 line-bot-sdk
