@@ -1,7 +1,8 @@
 from function.sport_crawler import Leaderboard, Rank_user
 from function.data_process import Output_maker
 from function.gmail import Gmail_machine
-from function.config import rawdata_path, workdata_path, alliance_dict
+from function.gsheet import *
+from function.config import rawdata_path, workdata_path, database_url, alliance_dict
 import os
 from dotenv import load_dotenv
 import pandas as pd
@@ -37,10 +38,10 @@ def main(target, during, target_num, is_gc):
     return leaderboard, all_prediction
 
 def enter_command():
-    command_text = input('請輸入指令開始爬蟲(e.g. Start NBA thismonth 15):')
+    command_text = input('請輸入指令開始爬蟲(e.g. NBA thismonth 15):')
     try:
         command_list = command_text.split()
-        return command_list[1], command_list[2], int(command_list[3])
+        return command_list[0], command_list[1], int(command_list[2])
     except Exception as e:
         print(e)
         return None, None, None
@@ -48,6 +49,7 @@ def enter_command():
 
 if __name__ == '__main__':
     load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
+    key_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json'
 
     #蒐集資料
     print('開始爬蟲!')
@@ -63,13 +65,23 @@ if __name__ == '__main__':
     output.mainpush_summary.to_csv(f'{workdata_path}/mainpush_{target}_{today}.csv', index=False)
     output.total_summary.to_csv(f'{workdata_path}/total_{target}_{today}.csv', index=False)
 
-    #寄送郵件
+    #儲存資料
     data = {
         'leaderboard': leaderboard,
         'prediction': prediction,
         'mainpush': output.mainpush_summary,
         'total': output.total_summary
     }
+    raw_sheet, total_sheet, mainpush_sheet = open_gsheet(
+        key_path='/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json',
+        database_url=database_url,
+    )
+    append_dataframe(data['prediction'], raw_sheet, target)
+    append_dataframe(data['mainpush'], mainpush_sheet, target)
+    append_dataframe(data['total'], total_sheet, target)
+    print('資料儲存完畢')
+
+    #寄送郵件
     gmail_machine = Gmail_machine(target, today, data)
     gmail_machine.send_mail(os.getenv('Alex_Account'))
     gmail_machine.send_mail(os.getenv('Bro_Account'))

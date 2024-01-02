@@ -1,5 +1,6 @@
 rawdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata'
 workdata_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/workdata'
+database_url = 'https://docs.google.com/spreadsheets/d/1IcTCgwnIk_EKnqRdBYK7-MGfxiTrxbTnm3-89Fc76X4/edit?usp=sharing'
 
 back_links = [
     '','','','','','',

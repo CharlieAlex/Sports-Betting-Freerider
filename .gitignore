@@ -4,3 +4,4 @@ Note.md
 test*
 **/__pycache__
 *.csv
+*.json

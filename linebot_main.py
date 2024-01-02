@@ -30,9 +30,17 @@ def linebot_main(target, during, target_num, *mail_accounts):
     }
     print('資料整理完畢')
 
+    raw_sheet, total_sheet, mainpush_sheet = open_gsheet(
+        key_path='/etc/secrets/sport-lottery-database.json',
+        database_url=database_url,
+    )
+    append_dataframe(data['prediction'], raw_sheet, target)
+    append_dataframe(data['mainpush'], mainpush_sheet, target)
+    append_dataframe(data['total'], total_sheet, target)
+    print('資料儲存完畢')
+
     gmail_machine = Gmail_machine(target, today, data)
     if not mail_accounts:
-        gmail_machine.send_mail(os.getenv('Alex_Account'))
         gmail_machine.send_mail(os.getenv('Bro_Account'))
     else:
         [gmail_machine.send_mail(account) for account in mail_accounts]
