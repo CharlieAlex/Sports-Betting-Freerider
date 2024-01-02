@@ -17,10 +17,11 @@ def open_gsheet(key_path:str, database_url:str)->(Worksheet, Worksheet):
         .authorize(service_account_file=key_path)
         .open_by_url(database_url)
     )
-    raw_sheet = sh.worksheet_by_title('rawdata')
+    board_sheet = sh.worksheet_by_title('leaderboard')
+    pred_sheet = sh.worksheet_by_title('prediction')
     total_sheet = sh.worksheet_by_title('total')
     mainpush_sheet = sh.worksheet_by_title('main_push')
-    return raw_sheet, total_sheet, mainpush_sheet
+    return board_sheet, pred_sheet, total_sheet, mainpush_sheet
 
 def start_cell(ws:Worksheet)->str:
     df = pd.DataFrame(ws.get_all_values())

@@ -72,11 +72,12 @@ if __name__ == '__main__':
         'mainpush': output.mainpush_summary,
         'total': output.total_summary
     }
-    raw_sheet, total_sheet, mainpush_sheet = open_gsheet(
+    board_sheet, pred_sheet, total_sheet, mainpush_sheet = open_gsheet(
         key_path='/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json',
         database_url=database_url,
     )
-    append_dataframe(data['prediction'], raw_sheet, target)
+    append_dataframe(data['leaderboard'], board_sheet, target)
+    append_dataframe(data['prediction'], pred_sheet, target)
     append_dataframe(data['mainpush'], mainpush_sheet, target)
     append_dataframe(data['total'], total_sheet, target)
     print('資料儲存完畢')
