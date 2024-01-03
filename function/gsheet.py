@@ -12,6 +12,10 @@ def add_sport(df:pd.DataFrame, sport:str)->pd.DataFrame:
     df['sport'] = sport
     return df
 
+def add_rank(df:pd.DataFrame)->pd.DataFrame:
+    df['rank']  = df['count'].rank(ascending=False, method='min')
+    return df
+
 def open_gsheet(key_path:str, database_url:str)->(Worksheet, Worksheet):
     sh = (pygsheets
         .authorize(service_account_file=key_path)

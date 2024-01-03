@@ -14,9 +14,22 @@ class Output_maker:
         df = df[df['mode'] == '國際盤賽事'].reset_index(drop=True)
         return df
 
-    @property
-    def mainpush_summary(self):
-        df = self.merge_df[self.is_mode & self.is_mainpush].copy()
+    def combine_game(self, df:pd.DataFrame)->pd.DataFrame:
+        df['game'] = (df['game']
+            .str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
+            .str.strip()
+            .replace('無預測', pd.NA)
+            )
+        return df
+
+    def combine_prediction(self, df:pd.DataFrame)->pd.DataFrame:
+        df['prediction'] = (df['prediction']
+            .str.replace(r'\d.|[贏輸%]', '', regex=True)
+            .str.strip()
+            )
+        return df
+
+    def count_prediction(self, df:pd.DataFrame)->pd.DataFrame:
         df['count'] = 1
         return (df[['game', 'prediction', 'count']]
             .groupby(['game', 'prediction']).count()
@@ -25,22 +38,21 @@ class Output_maker:
             )
 
     @property
+    def mainpush_summary(self):
+        df = self.merge_df[self.is_mode & self.is_mainpush].copy()
+        return (df
+            .pipe(self.combine_game)
+            .pipe(self.combine_prediction)
+            .pipe(self.count_prediction)
+            )
+
+    @property
     def total_summary(self):
         df = self.merge_df[self.is_mode].copy()
-        df['count'] = 1
-        df['game'] = (df['game']
-            .str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
-            .str.strip()
-            .replace('無預測', pd.NA)
-            )
-        df['prediction'] = (df['prediction']
-            .str.replace(r'\d.|[贏輸%]', '', regex=True)
-            .str.strip()
-            )
-        return (df[['game', 'prediction', 'count']]
-            .groupby(['game', 'prediction']).count()
-            .sort_values(['count'], ascending=False)
-            .reset_index()
+        return (df
+            .pipe(self.combine_game)
+            .pipe(self.combine_prediction)
+            .pipe(self.count_prediction)
             )
 
 if __name__ == '__main__':

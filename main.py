@@ -48,6 +48,7 @@ def enter_command():
 
 
 if __name__ == '__main__':
+    # NBA season 3
     load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
     key_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json'
 
@@ -84,6 +85,6 @@ if __name__ == '__main__':
     )
     append_dataframe(data['leaderboard'], board_sheet, target)
     append_dataframe(data['prediction'], pred_sheet, target)
-    append_dataframe(data['mainpush'], mainpush_sheet, target)
-    append_dataframe(data['total'], total_sheet, target)
+    append_dataframe(data['mainpush'].pipe(add_rank), mainpush_sheet, target)
+    append_dataframe(data['total'].pipe(add_rank), total_sheet, target)
     print('資料儲存完畢')

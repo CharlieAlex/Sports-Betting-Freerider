@@ -43,8 +43,8 @@ def linebot_main(target, during, target_num, *mail_accounts):
     )
     append_dataframe(data['leaderboard'], board_sheet, target)
     append_dataframe(data['prediction'], pred_sheet, target)
-    append_dataframe(data['mainpush'], mainpush_sheet, target)
-    append_dataframe(data['total'], total_sheet, target)
+    append_dataframe(data['mainpush'].pipe(add_rank), mainpush_sheet, target)
+    append_dataframe(data['total'].pipe(add_rank), total_sheet, target)
     print('資料儲存完畢')
 
     return '已完成爬蟲，請前往收信'
