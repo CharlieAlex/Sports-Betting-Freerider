@@ -4,7 +4,7 @@ pandas
 python-dotenv
 tqdm
 pygsheets
-
+pytz
 Flask
 line-bot-sdk
 gunicorn

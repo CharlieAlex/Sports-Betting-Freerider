@@ -2,10 +2,12 @@ import pygsheets
 from pygsheets.worksheet import Worksheet
 import datetime
 import pandas as pd
+import pytz
 
 def add_datetime(df:pd.DataFrame)->pd.DataFrame:
-    df['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-    df['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+    taipei_timezone = pytz.timezone('Asia/Taipei')
+    df['date'] = datetime.datetime.now(taipei_timezone).strftime('%Y-%m-%d')
+    df['time'] = datetime.datetime.now(taipei_timezone).strftime('%H:%M:%S')
     return df
 
 def add_sport(df:pd.DataFrame, sport:str)->pd.DataFrame:
