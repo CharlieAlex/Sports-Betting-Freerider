@@ -75,7 +75,6 @@ if __name__ == '__main__':
     #寄送郵件
     gmail_machine = Gmail_machine(target, today, data)
     gmail_machine.send_mail(os.getenv('Alex_Account'))
-    gmail_machine.send_mail(os.getenv('Bro_Account'))
     print('寄送郵件完畢!')
 
     #儲存資料
@@ -83,8 +82,8 @@ if __name__ == '__main__':
         key_path='/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json',
         database_url=database_url,
     )
-    append_dataframe(data['leaderboard'], board_sheet, target)
-    append_dataframe(data['prediction'], pred_sheet, target)
-    append_dataframe(data['mainpush'].pipe(add_rank), mainpush_sheet, target)
-    append_dataframe(data['total'].pipe(add_rank), total_sheet, target)
+    append_dataframe(data['leaderboard'], board_sheet, target, during)
+    append_dataframe(data['prediction'], pred_sheet, target, during)
+    append_dataframe(data['mainpush'].pipe(add_rank), mainpush_sheet, target, during)
+    append_dataframe(data['total'].pipe(add_rank), total_sheet, target, during)
     print('資料儲存完畢')

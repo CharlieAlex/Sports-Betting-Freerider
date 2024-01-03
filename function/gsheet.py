@@ -14,6 +14,10 @@ def add_sport(df:pd.DataFrame, sport:str)->pd.DataFrame:
     df['sport'] = sport
     return df
 
+def add_during(df:pd.DataFrame, during:str)->pd.DataFrame:
+    df['during'] = during
+    return df
+
 def add_rank(df:pd.DataFrame)->pd.DataFrame:
     df['rank']  = df['count'].rank(ascending=False, method='min')
     return df
@@ -34,11 +38,13 @@ def start_cell(ws:Worksheet)->str:
     current_rows = df[df[0] != ''].shape[0]
     return "A"+str(current_rows+1)
 
-def append_dataframe(df:pd.DataFrame, ws:Worksheet, sport:str)->None:
-    ws.set_dataframe(
-        df.pipe(add_datetime).pipe(add_sport, sport),
-        start=start_cell(ws), copy_head=False,
+def append_dataframe(df:pd.DataFrame, ws:Worksheet, sport:str, during:str)->None:
+    df = (df
+        .pipe(add_datetime)
+        .pipe(add_sport, sport)
+        .pipe(add_during, during)
     )
+    ws.set_dataframe(df, start=start_cell(ws), copy_head=False)
     return None
 
 if __name__ == '__main__':
