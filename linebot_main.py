@@ -9,8 +9,10 @@ from linebot.models import (
     )
 
 def linebot_main(target, during, target_num, *mail_accounts):
+    key_path_linebot = '/etc/secrets/sport-lottery-database.json'
+
     if re.match(r'^yesterday|.*daysAgo$', during):
-        result_main(target, during, target_num, is_gc=True)
+        result_main(target, during, target_num, is_gc=True, key_path=key_path_linebot)
         return '已完成結果搜集，請前往雲端工作表查看'
     if (during not in during_list):
         return '資料時間範圍有誤，請輸入 help 查看指令格式'

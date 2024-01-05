@@ -41,7 +41,7 @@ def main(target, during, target_num, is_gc):
 
     return leaderboard, all_prediction
 
-def result_main(target, during, target_num, is_gc):
+def result_main(target, during, target_num, is_gc, key_path):
     leaderboard, prediction = main(target, during, target_num, is_gc)
     print('爬蟲完畢')
 
@@ -78,13 +78,13 @@ def enter_command():
 if __name__ == '__main__':
     # NBA season 3
     load_dotenv('/Users/alexlo/Desktop/Project/Others/App_Setting/.env')
-    key_path = '/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json'
+    key_path_local = '/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json'
 
     #蒐集資料
     target, during, target_num = enter_command()
     print('開始爬蟲!')
     if re.match(r'^yesterday|.*daysAgo$', during):
-        result_main(target, during, target_num, is_gc=True)
+        result_main(target, during, target_num, is_gc=True, key_path=key_path_local)
     else:
         taipei_timezone = pytz.timezone('Asia/Taipei')
         today = datetime.now(taipei_timezone).strftime('%Y%m%d')
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
         #儲存資料
         board_sheet, pred_sheet, total_sheet, mainpush_sheet = open_gsheet(
-            key_path='/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json',
+            key_path=key_path_local,
             database_url=database_url,
         )
         append_dataframe(data['leaderboard'], board_sheet, target, during)
