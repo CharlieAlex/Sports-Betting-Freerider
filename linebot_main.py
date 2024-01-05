@@ -19,6 +19,7 @@ def linebot_main(target, during, target_num, *mail_accounts):
             return f'{account} 格式有誤，請輸入 help 查看指令格式'
     print('參數確認完畢')
 
+    taipei_timezone = pytz.timezone('Asia/Taipei')
     today = datetime.now(taipei_timezone).strftime('%Y%m%d')
     leaderboard, prediction = main(target, during, target_num, is_gc=True)
     print('爬蟲完畢')
