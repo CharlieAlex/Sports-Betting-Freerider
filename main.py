@@ -18,6 +18,8 @@ def main(target, during, target_num, is_gc):
     #獲得排行榜數據
     if re.match(r'^yesterday|.*daysAgo$', during):
         gameday, during = during, 'thismonth'
+    else:
+        gameday = 'today'
     rank_list = Leaderboard(alliance_dict[target], during, gameday)
     leaderboard = rank_list.dataframe
     leaderboard = leaderboard[leaderboard['mode'] == '國際盤賽事']
