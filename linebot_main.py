@@ -9,15 +9,14 @@ from linebot.models import (
     )
 
 def linebot_main(target, during, target_num, *mail_accounts):
-    email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    if (during not in during_list):
-        return '資料時間範圍有誤，請輸入 help 查看指令格式'
-    for account in mail_accounts:
-        if not re.fullmatch(email_pattern, account):
-            return f'{account} 格式有誤，請輸入 help 查看指令格式'
     if re.match(r'^yesterday|.*daysAgo$', during):
         result_main(target, during, target_num, is_gc=True)
         return '已完成結果搜集，請前往雲端工作表查看'
+    if (during not in during_list):
+        return '資料時間範圍有誤，請輸入 help 查看指令格式'
+    for account in mail_accounts:
+        if not re.fullmatch(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', account):
+            return f'{account} 格式有誤，請輸入 help 查看指令格式'
     print('參數確認完畢')
 
     today = datetime.now(taipei_timezone).strftime('%Y%m%d')
