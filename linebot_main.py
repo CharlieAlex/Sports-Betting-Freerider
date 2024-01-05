@@ -15,9 +15,12 @@ def linebot_main(target, during, target_num, *mail_accounts):
     for account in mail_accounts:
         if not re.fullmatch(email_pattern, account):
             return f'{account} 格式有誤，請輸入 help 查看指令格式'
+    if re.match(r'^yesterday|.*daysAgo$', during):
+        result_main(target, during, target_num, is_gc=True)
+        return '已完成結果搜集，請前往雲端工作表查看'
     print('參數確認完畢')
 
-    today = date.today().strftime("%Y%m%d")
+    today = datetime.now(taipei_timezone).strftime('%Y%m%d')
     leaderboard, prediction = main(target, during, target_num, is_gc=True)
     print('爬蟲完畢')
 

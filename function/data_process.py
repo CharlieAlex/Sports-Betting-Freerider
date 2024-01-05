@@ -4,7 +4,7 @@ class Output_maker:
     def __init__(self, leaderboard, prediction) -> None:
         self.leaderboard = leaderboard
         self.prediction_df = prediction
-        self.merge_df = pd.merge(self.leaderboard_df, prediction, on='userid', how='inner')
+        self.merge_df = pd.merge(self.leaderboard_df, self.prediction_df, on='userid', how='inner')
         self.is_mainpush = (self.merge_df['main_push']==True)
         self.is_mode = (self.merge_df['mode_x']==self.merge_df['mode_y'])
 
@@ -37,6 +37,13 @@ class Output_maker:
             .reset_index()
             )
 
+    def drop_duplicate(self, df:pd.DataFrame)->pd.DataFrame:
+        return df[['game', 'prediction', 'result']].drop_duplicates()
+
+    def drop_score(self, df:pd.DataFrame)->pd.DataFrame:
+        df['game'] = df['game'].str.replace(r'^\d+\s*V\.S\.\s*\d+\s*', '', regex=True)
+        return df
+
     @property
     def mainpush_summary(self):
         df = self.merge_df[self.is_mode & self.is_mainpush].copy()
@@ -53,6 +60,16 @@ class Output_maker:
             .pipe(self.combine_game)
             .pipe(self.combine_prediction)
             .pipe(self.count_prediction)
+            )
+
+    @property
+    def result_summary(self):
+        df = self.merge_df[self.is_mode].copy()
+        return (df
+            .pipe(self.combine_game)
+            .pipe(self.combine_prediction)
+            .pipe(self.drop_duplicate)
+            .pipe(self.drop_score)
             )
 
 if __name__ == '__main__':

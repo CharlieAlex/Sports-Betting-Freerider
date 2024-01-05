@@ -12,18 +12,20 @@ import random
 user_agent = UserAgent()
 
 class Leaderboard:
-    def __init__(self, alliance, during):
-        self.web_url = 'https://www.playsport.cc/'
+    def __init__(self, alliance, during, gameday='today'):
         self.alliance = alliance
         self.during = during
-        self.board_url = self.web_url + f'billboard/mainPrediction?during={during}&allianceid={alliance}'
+        self.gameday = gameday
+        self.web_url = 'https://www.playsport.cc/'
+        self.user_url = self.web_url + 'visit_member.php?visit='
         self.header = {'User-Agent':user_agent.random, 'Referer': random.choice(back_links)}
         self.html_content = BeautifulSoup(self.crawl_content, 'html.parser')
 
     @cached_property
     def crawl_content(self):
+        board_url = self.web_url + f'billboard/mainPrediction?during={self.during}&allianceid={self.alliance}'
         print('向排行榜發送爬蟲要求!')
-        r = requests.get(url=self.board_url, headers=self.header)
+        r = requests.get(url=board_url, headers=self.header)
         if r.status_code == 403:
             print('IP被ban了, GG...')
         return r.text
@@ -40,7 +42,7 @@ class Leaderboard:
         global_ranks = pd.DataFrame(self.board_json['rankers'].get('2', []))
         df = pd.concat([global_ranks, taiwan_ranks], ignore_index=True)
         df.replace({'mode': {1: '運彩盤賽事', 2: '國際盤賽事', '1': '運彩盤賽事', '2': '國際盤賽事'}}, inplace=True)
-        df['linkUrl'] = self.web_url + '//' + df['linkUrl']
+        df['linkUrl'] = self.user_url + df["userid"] + f'&allianceid={self.alliance}&gameday={self.gameday}'
         return df
 
 
@@ -62,14 +64,14 @@ class Rank_user:
     def prediction(self)->pd.DataFrame:
         def clean_table(table):
             mode = table.columns[0]
-            table = table.iloc[:, 1:-1].copy()
-            table.columns = ['game', 'prediction']
+            table = table.iloc[:, 1:].copy()
+            table.columns = ['game', 'prediction', 'result']
             table['userid'] = self.user_data['userid']
             table['nickname'] = self.user_data['nickname']
             table['rank'] = self.user_data['rank']
             table['mode'] = mode
             table = table[table['game'] != '無預測']
-            return table[['userid', 'nickname', 'rank', 'mode', 'game', 'prediction']]
+            return table[['userid', 'nickname', 'rank', 'mode', 'game', 'prediction', 'result']]
 
         def is_main_push(pred_list):
             main_push_list = []

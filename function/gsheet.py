@@ -1,13 +1,15 @@
 import pygsheets
 from pygsheets.worksheet import Worksheet
-import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import pytz
 
-def add_datetime(df:pd.DataFrame)->pd.DataFrame:
+def add_datetime(df:pd.DataFrame, deltadays:int|str)->pd.DataFrame:
     taipei_timezone = pytz.timezone('Asia/Taipei')
-    df['date'] = datetime.datetime.now(taipei_timezone).strftime('%Y-%m-%d')
-    df['time'] = datetime.datetime.now(taipei_timezone).strftime('%H:%M:%S')
+    now = datetime.now(taipei_timezone)
+    assign_date = now - timedelta(days=int(deltadays))
+    df['date'] = assign_date.strftime('%Y-%m-%d')
+    df['time'] = assign_date.strftime('%H:%M:%S')
     return df
 
 def add_sport(df:pd.DataFrame, sport:str)->pd.DataFrame:
@@ -40,7 +42,7 @@ def start_cell(ws:Worksheet)->str:
 
 def append_dataframe(df:pd.DataFrame, ws:Worksheet, sport:str, during:str)->None:
     df = (df
-        .pipe(add_datetime)
+        .pipe(add_datetime, 0)
         .pipe(add_sport, sport)
         .pipe(add_during, during)
     )
