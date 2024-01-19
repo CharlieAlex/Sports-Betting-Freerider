@@ -24,6 +24,13 @@ def add_rank(df:pd.DataFrame)->pd.DataFrame:
     df['rank']  = df['count'].rank(ascending=False, method='min')
     return df
 
+def sort_result(df:pd.DataFrame)->pd.DataFrame:
+    df = df.sort_values(
+        ['date', 'time', 'game', 'prediction'],
+        ascending=[True, True, True, False],
+    )
+    return df
+
 def open_gsheet(key_path:str, database_url:str)->(Worksheet, Worksheet):
     sh = (pygsheets
         .authorize(service_account_file=key_path)

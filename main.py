@@ -61,6 +61,7 @@ def result_main(target, during, target_num, is_gc, key_path):
         .pipe(add_datetime, deltadays)
         .pipe(add_sport, target)
         .pipe(add_during, during)
+        .pipe(sort_result)
     )
     result_sheet.set_dataframe(df, start=start_cell(result_sheet), copy_head=False)
     print('資料儲存完畢')
