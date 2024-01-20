@@ -52,6 +52,9 @@ def linebot_main(target, during, target_num, *mail_accounts):
     append_dataframe(data['total'].pipe(add_rank), total_sheet, target, during)
     print('資料儲存完畢')
 
+    if data['total']['game'].isna().any():
+        return '有對戰資料缺漏，請前往雲端工作表查看'
+
     return '已完成爬蟲，請前往收信'
 
 def time_template(command):

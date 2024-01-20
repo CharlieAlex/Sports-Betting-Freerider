@@ -16,12 +16,10 @@ class Output_maker:
         return df
 
     def combine_game(self, df:pd.DataFrame)->pd.DataFrame:
-        df['game_origin'] = (df['game']
+        df['game'] = (df['game']
             .str.replace(r'\s*\d+\s*分[贏輸]\d+%?\s*', '', regex=True)
             .str.strip()
             .replace('無預測', pd.NA)
-        )
-        df['game'] = (df['game_origin']
             .str.replace('(主)', '')
             .str.extract(f'(?P<guest_team>{team_pattern})\s*(?P<home_team>{team_pattern})')
             .assign(game = lambda x: x['guest_team'] + ' vs ' + x['home_team'])
@@ -33,7 +31,7 @@ class Output_maker:
         df = (df
             .str.replace('費城人', '費城76人')
             .str.replace('阿德雷德人', '阿德雷德36人')
-        )
+            )
         return df
 
     def combine_prediction(self, df:pd.DataFrame)->pd.DataFrame:
