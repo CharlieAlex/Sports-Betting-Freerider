@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from function.config import team_pattern
 
 class Output_maker:
@@ -93,6 +94,8 @@ class Output_maker:
             temp = (row['pred_team'] == row['guest_team'])
             row['pred_team'] = row['home_team'] if temp else row['guest_team']
             return row
+        def count_duplicate(df:pd.DataFrame)->pd.DataFrame:
+            return df.groupby(['game', 'prediction']).size().reset_index(name='duplicate').reset_index(drop=True)
 
         is_totalover = df['prediction'].isin(['大分', '小分'])
         df_over, df_win = df[is_totalover], df[~is_totalover]
@@ -104,7 +107,7 @@ class Output_maker:
             df_over.copy()
                 .pipe(switch_result, ['大分', '小分'])
                 .pipe(switch_result, ['準', '囧'])
-        ])
+        ]).drop_duplicates()
         df_win = pd.concat([
             df_win.copy(),
             df_win.copy()
@@ -114,9 +117,19 @@ class Output_maker:
                 .apply(switch_pred_team, axis=1)
                 .assign(prediction=lambda x: x['pred_team'] + ' ' + x['pred_text'])
                 .drop(['pred_team', 'pred_text', 'guest_team', 'home_team'], axis=1)
-        ])
+        ]).drop_duplicates()
 
-        return pd.concat([df_over, df_win]).drop_duplicates()
+        df_final = (
+            pd.merge(
+                pd.concat([df_over, df_win]), 
+                pd.concat([df_over.pipe(count_duplicate), df_win.pipe(count_duplicate)]),
+                how='left', on=['game', 'prediction']
+            )
+            .assign(outcome=lambda x: np.where(x['duplicate'] > 1, '?', x['result']))
+            .drop(columns={'duplicate'})
+        )
+
+        return df_final
 
 
 if __name__ == '__main__':
