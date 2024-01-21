@@ -45,7 +45,7 @@ def open_gsheet(key_path:str, database_url:str)->(Worksheet, Worksheet):
 def start_cell(ws:Worksheet)->str:
     df = pd.DataFrame(ws.get_all_values())
     current_rows = df[df[0] != ''].shape[0]
-    return "A"+str(current_rows+1)
+    return "A"+str(current_rows+2)
 
 def append_dataframe(df:pd.DataFrame, ws:Worksheet, sport:str, during:str)->None:
     df = (df
