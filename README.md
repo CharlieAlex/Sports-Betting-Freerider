@@ -75,8 +75,8 @@
 <img src="images/appscript_code.png?raw=true" alt="AppScript程式碼" style="width: 100%;">
 <img src="images/appscript_auto.png?raw=true" alt="AppScript自動化" style="width: 100%;">
 
-## 資料分析結果
+## 資料分析
 
-由於台灣運彩的賠率是 1.75，因此要獲利勝率就必須維持在 $\frac{1}{1.75} \approx 58\%$ 以上。
-目前若使用上個月的主推榜每天最多人選擇的預測結果，則勝率最高為 $62\%$，
+由於台灣運彩的賠率是 $1.75$，因此要獲利勝率就必須維持在 $\frac{1}{1.75} \approx 58$% 以上。
+目前若使用上個月的主推榜每天最多人選擇的預測結果，則勝率最高為 $62$%，
 此專案是否能順利使用尚有待觀察。
