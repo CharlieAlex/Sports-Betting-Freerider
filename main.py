@@ -20,13 +20,19 @@ def main(target, during, target_num, is_gc):
         gameday, during = during, 'lastmonth'
     else:
         gameday = 'today'
-    rank_list = Leaderboard(alliance_dict[target], during, gameday)
-    leaderboard = rank_list.dataframe
-    leaderboard = leaderboard[leaderboard['mode'] == '國際盤賽事']
+    leaderboard = pd.DataFrame()
+    for page in range(2):
+        try:
+            rank_list = Leaderboard(alliance_dict[target], during, page, gameday)
+            tempboard = rank_list.dataframe
+            tempboard = tempboard[tempboard['mode'] == '國際盤賽事']
+            leaderboard = pd.concat([leaderboard, tempboard], ignore_index=True)
+        except Exception as e:
+            print(e)
 
     #獲得國際盤排行榜上每一個人的預測數據
     all_prediction = pd.DataFrame()
-    crawl_num = 30 if leaderboard.shape[0] > 30 else leaderboard.shape[0]
+    crawl_num = leaderboard.shape[0]
     collected_count = 0
     for i in trange(crawl_num):
         try:

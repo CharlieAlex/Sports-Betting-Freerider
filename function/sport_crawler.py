@@ -12,9 +12,10 @@ import random
 user_agent = UserAgent()
 
 class Leaderboard:
-    def __init__(self, alliance, during, gameday='today'):
+    def __init__(self, alliance, during, page, gameday='today'):
         self.alliance = alliance
         self.during = during
+        self.page = page
         self.gameday = gameday
         self.web_url = 'https://www.playsport.cc/'
         self.user_url = self.web_url + 'visit_member.php?visit='
@@ -23,7 +24,7 @@ class Leaderboard:
 
     @cached_property
     def crawl_content(self):
-        board_url = self.web_url + f'billboard/mainPrediction?during={self.during}&allianceid={self.alliance}'
+        board_url = self.web_url + f'billboard/mainPrediction?during={self.during}&allianceid={self.alliance}&page={self.page}'
         print('向排行榜發送爬蟲要求!')
         r = requests.get(url=board_url, headers=self.header)
         if r.status_code == 403:
