@@ -68,11 +68,10 @@
 
 ### Google Apps Script 進行自動化資料處理
 
-原先對 Google Sheet 進行資料處理都是使用內建的函示如 `Match()\, `ArrayFormula()` 等，
+原先對 Google Sheet 進行資料處理都是使用內建的函示如 `Match()`, `ArrayFormula()` 等，
 但是這些都會使表單的運作變得緩慢，因此本專案額外使用 Google Apps Script 來進行自動化資料處理，
 將原先的公式寫成 AppScript 程式碼，並且設定每天固定時間自動執行。
 
-<img src="images/appscript_code.png?raw=true" alt="AppScript程式碼" style="width: 100%;">
 <img src="images/appscript_auto.png?raw=true" alt="AppScript自動化" style="width: 100%;">
 
 ## 資料分析
