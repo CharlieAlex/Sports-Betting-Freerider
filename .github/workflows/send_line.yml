@@ -2,13 +2,13 @@ name: Send LINE Messages
 
 on:
     schedule:
-        - cron: "03 16 * * *"
-        - cron: "08 16 * * *"
-        - cron: "09 16 * * *"
-        - cron: "10 16 * * *"
-        - cron: "11 16 * * *"
-        - cron: "13 16 * * *"
-        - cron: "14 16 * * *"
+        - cron: "20 16 * * *"
+        - cron: "25 16 * * *"
+        - cron: "26 16 * * *"
+        - cron: "27 16 * * *"
+        - cron: "28 16 * * *"
+        - cron: "30 16 * * *"
+        - cron: "31 16 * * *"
         - cron: "00 01 * * *"
         - cron: "05 01 * * *"
         - cron: "06 01 * * *"
@@ -51,7 +51,15 @@ jobs:
                   LINE_ACCESS_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
                   LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
               run: |
-                  curl -X POST -H 'Content-Type: application/json' -H "Authorization: Bearer $LINE_ACCESS_TOKEN" -d '{
+                  curl -X POST https://api.line.me/v2/bot/message/push \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer $LINE_CHANNEL_ACCESS_TOKEN" \
+                  -d '{
                     "to": "'$LINE_USER_ID'",
-                    "messages":[{"type":"text","text":"'${{ steps.set-message.outputs.message }}'"}]
-                  }' https://api.line.me/v2/bot/message/push
+                    "messages":[
+                        {
+                            "type":"text",
+                            "text":"'${{ steps.set-message.outputs.message }}'"
+                        }
+                    ]
+                  }'
