@@ -2,6 +2,7 @@ name: Send LINE Messages
 
 on:
     schedule:
+        - cron: "32 06 * * *" #test
         - cron: "03 16 * * *"
         - cron: "08 16 * * *"
         - cron: "09 16 * * *"
@@ -23,32 +24,34 @@ jobs:
               id: set-message
               run: |
                   if [ "$(date +'%H:%M')" == "16:03" ]; then
-                      echo "::set-output name=message::NBA thismonth 30"
+                      echo "MESSAGE=NBA thismonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:08" ]; then
-                      echo "::set-output name=message::NBA lastmonth 30"
+                      echo "MESSAGE=NBA lastmonth 30" >> $GITHUB_ENV
+                  elif [ "$(date +'%H:%M')" == "06:32" ]; then
+                      echo "MESSAGE=NBA lastmonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:09" ]; then
-                      echo "::set-output name=message::NBA thismonth 30"
+                      echo "MESSAGE=NBA thismonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:10" ]; then
-                      echo "::set-output name=message::NHL冰球 thismonth 30"
+                      echo "MESSAGE=NHL冰球 thismonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:11" ]; then
-                      echo "::set-output name=message::NHL冰球 lastmonth 30"
+                      echo "MESSAGE=NHL冰球 lastmonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:13" ]; then
-                      echo "::set-output name=message::MLB lastmonth 30"
+                      echo "MESSAGE=MLB lastmonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:14" ]; then
-                      echo "::set-output name=message::MLB thismonth 30"
+                      echo "MESSAGE=MLB thismonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "01:00" ]; then
-                      echo "::set-output name=message::NBA yesterday 20"
+                      echo "MESSAGE=NBA yesterday 20" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "01:05" ]; then
-                      echo "::set-output name=message::NBA yesterday 20"
+                      echo "MESSAGE=NBA yesterday 20" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "01:06" ]; then
-                      echo "::set-output name=message::NHL冰球 yesterday 10"
+                      echo "MESSAGE=NHL冰球 yesterday 10" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "01:07" ]; then
-                       echo "::set-output name=message::MLB yesterday 15"
+                      echo "MESSAGE=MLB yesterday 15" >> $GITHUB_ENV
                   fi
 
             - name: Send message to LINE
               env:
-                  LINE_ACCESS_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
+                  LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
                   LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
               run: |
                   curl -X POST https://api.line.me/v2/bot/message/push \
@@ -59,7 +62,7 @@ jobs:
                     "messages":[
                         {
                             "type":"text",
-                            "text":"'${{ steps.set-message.outputs.message }}'"
+                            "text":"'"${{ env.MESSAGE }}"'"
                         }
                     ]
                   }'
