@@ -2,7 +2,7 @@ name: Send LINE Messages
 
 on:
     schedule:
-        - cron: "32 06 * * *" #test
+        - cron: "37 06 * * *" #test
         - cron: "03 16 * * *"
         - cron: "08 16 * * *"
         - cron: "09 16 * * *"
@@ -27,7 +27,7 @@ jobs:
                       echo "MESSAGE=NBA thismonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:08" ]; then
                       echo "MESSAGE=NBA lastmonth 30" >> $GITHUB_ENV
-                  elif [ "$(date +'%H:%M')" == "06:32" ]; then
+                  elif [ "$(date +'%H:%M')" == "06:37" ]; then
                       echo "MESSAGE=NBA lastmonth 30" >> $GITHUB_ENV
                   elif [ "$(date +'%H:%M')" == "16:09" ]; then
                       echo "MESSAGE=NBA thismonth 30" >> $GITHUB_ENV
