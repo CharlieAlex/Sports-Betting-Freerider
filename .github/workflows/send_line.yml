@@ -13,7 +13,7 @@ on:
         - cron: "05 01 * * *"
         - cron: "06 01 * * *"
         - cron: "07 01 * * *"
-        - cron: "01 13 * * *" # 每天台北時間 21:00 觸發
+        - cron: "09 13 * * *" # 每天台北時間 21:00 觸發
 
 jobs:
     send-message:
@@ -46,8 +46,10 @@ jobs:
                       echo "MESSAGE=NHL冰球 yesterday 10" >> $GITHUB_ENV
                   elif [ "$TIME" == "01:07" ]; then
                       echo "MESSAGE=MLB yesterday 15" >> $GITHUB_ENV
-                  elif [ "$TIME" == "13:01" ]; then
+                  elif [ "$TIME" == "13:09" ]; then
                       echo "MESSAGE=台北時間 21:00 消息" >> $GITHUB_ENV
+                  else
+                      echo "MESSAGE=Current time is $TIME" >> $GITHUB_ENV
                   fi
 
             - name: Send message to LINE
