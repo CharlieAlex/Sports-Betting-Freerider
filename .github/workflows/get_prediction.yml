@@ -2,84 +2,51 @@ name: Get Prediction
 
 on:
     schedule:
-        - cron: "03 16 * * *"
+        - cron: "50 16 * * *"
 
 jobs:
     send-message:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Send message to LINE
+            - name: Send message to LINE Notify
               env:
-                  LINE_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
-                  LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+                  LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
               run: |
-                  curl -X POST https://api.line.me/v2/bot/message/push \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer $LINE_ACCESS_TOKEN" \
-                  -d '{
-                    "to": "'$LINE_USER_ID'",
-                    "messages":[
-                        {
-                            "type":"text",
-                            "text":"喚醒 Line 機器人"
-                        }
-                    ]
-                  }'
+                  # First message
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=喚醒 Line 機器人"
 
                   sleep 300
 
-                  curl -X POST https://api.line.me/v2/bot/message/push \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer $LINE_ACCESS_TOKEN" \
-                  -d '{
-                    "to": "'$LINE_USER_ID'",
-                    "messages":[
-                        {
-                            "type":"text",
-                            "text":"NBA thismonth 30"
-                        },
-                        {
-                            "type":"text",
-                            "text":"NBA lastmonth 30"
-                        }
-                    ]
-                  }'
+                  # Second message
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=NBA thismonth 30"
+
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=NBA lastmonth 30"
 
                   sleep 60
 
-                  curl -X POST https://api.line.me/v2/bot/message/push \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer $LINE_ACCESS_TOKEN" \
-                  -d '{
-                    "to": "'$LINE_USER_ID'",
-                    "messages":[
-                        {
-                            "type":"text",
-                            "text":"NHL冰球 thismonth 30"
-                        },
-                        {
-                            "type":"text",
-                            "text":"NHL冰球 lastmonth 30"
-                        }
-                    ]
-                  }'
+                  # Third message
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=NHL冰球 thismonth 30"
+
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=NHL冰球 lastmonth 30"
 
                   sleep 60
 
-                  curl -X POST https://api.line.me/v2/bot/message/push \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer $LINE_ACCESS_TOKEN" \
-                  -d '{
-                    "to": "'$LINE_USER_ID'",
-                    "messages":[
-                        {
-                            "type":"text",
-                            "text":"MLB thismonth 30"
-                        },
-                        {
-                            "type":"text",
-                            "text":"MLB lastmonth 30"
-                        }
-                    ]
-                  }'
+                  # Fourth message
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=MLB thismonth 30"
+
+                  curl -X POST https://notify-api.line.me/api/notify \
+                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+                    -F "message=MLB lastmonth 30"
