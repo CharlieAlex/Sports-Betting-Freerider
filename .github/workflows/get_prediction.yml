@@ -2,7 +2,7 @@ name: Get Prediction
 
 on:
     schedule:
-        - cron: "50 16 * * *"
+        - cron: "13 17 * * *"
 
 jobs:
     send-message:
