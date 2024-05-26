@@ -2,7 +2,7 @@ name: Get Prediction
 
 on:
     schedule:
-        - cron: "0 0 1 12 2030"
+        - cron: "0 0 1 12 2025"
     workflow_dispatch:
 
 jobs:
