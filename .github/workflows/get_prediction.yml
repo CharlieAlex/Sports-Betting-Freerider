@@ -2,51 +2,37 @@ name: Get Prediction
 
 on:
     schedule:
-        - cron: "13 17 * * *"
+        - cron: "0 0 1 12 2030"
+    workflow_dispatch:
 
 jobs:
     send-message:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Send message to LINE Notify
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.11'
+
+            - name: Cache pip dependencies
+              uses: actions/cache@v2
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+                restore-keys: |
+                  ${{ runner.os }}-pip-
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Run script
               env:
                   LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
               run: |
-                  # First message
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=喚醒 Line 機器人"
-
-                  sleep 300
-
-                  # Second message
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=NBA thismonth 30"
-
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=NBA lastmonth 30"
-
-                  sleep 60
-
-                  # Third message
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=NHL冰球 thismonth 30"
-
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=NHL冰球 lastmonth 30"
-
-                  sleep 60
-
-                  # Fourth message
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=MLB thismonth 30"
-
-                  curl -X POST https://notify-api.line.me/api/notify \
-                    -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
-                    -F "message=MLB lastmonth 30"
+                python cron_main.py

@@ -2,7 +2,7 @@ name: Get Result
 
 on:
     schedule:
-        - cron: "00 01 * * *"
+        - cron: "0 0 1 12 2030"
 
 jobs:
     send-message:
