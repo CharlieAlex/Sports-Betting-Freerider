@@ -216,6 +216,18 @@ MLB_team = [
     "西雅圖水手",
     "德州遊騎兵",
 ]
-team_pattern = "|".join(
-    NBA_team + CBA_team + NHL_team + Korea_team + Aus_team + MLB_team
-)
+NPB_team = [
+    "讀賣巨人",
+    "養樂多燕子",
+    "橫濱海灣之星",
+    "中日龍",
+    "阪神虎",
+    "廣島東洋鯉魚",
+    "日本火腿鬥士",
+    "樂天金鷹",
+    "西武獅",
+    "羅德海洋",
+    "歐力士猛牛",
+    "軟體銀行鷹",
+]
+team_pattern = "|".join(NBA_team + NHL_team + MLB_team + NPB_team)
