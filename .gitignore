@@ -4,4 +4,5 @@ Note.md
 test*
 **/__pycache__
 *.csv
-sport-lottery-database-a36862122f3a.json
+g-sheet.json
+big-query.json
