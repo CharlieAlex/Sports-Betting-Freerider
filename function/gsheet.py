@@ -11,6 +11,8 @@ def add_datetime(df: pd.DataFrame, deltadays: int | str) -> pd.DataFrame:
     assign_date = now - timedelta(days=int(deltadays))
     df["date"] = assign_date.strftime("%Y-%m-%d")
     df["time"] = assign_date.strftime("%H:%M:%S")
+    df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d").dt.date
+    df["time"] = pd.to_datetime(df["time"], format="%H:%M:%S").dt.time
     return df
 
 
