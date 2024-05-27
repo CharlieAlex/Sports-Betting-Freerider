@@ -10,3 +10,4 @@ line-bot-sdk
 gunicorn
 requests
 lxml
+google-cloud-bigquery
