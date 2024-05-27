@@ -14,6 +14,7 @@ from datetime import datetime
 import pytz
 import gc
 from google.cloud import bigquery
+from gcp import schema
 
 
 def main(target, during, target_num, is_gc):
@@ -79,7 +80,9 @@ def result_main(target, during, target_num, is_gc, gs_key, bq_key):
 
     client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
     client.load_table_from_dataframe(
-        df, "sport-lottery-database.playsports.result"
+        df,
+        "sport-lottery-database.playsports.result",
+        job_config=schema.set_job_config(schema.result_schema),
     ).result()
     print("資料上傳至 Google Cloud")
 

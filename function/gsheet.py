@@ -3,6 +3,7 @@ from pygsheets.worksheet import Worksheet
 from datetime import datetime, timedelta
 import pandas as pd
 import pytz
+from gcp import schema
 
 
 def add_datetime(df: pd.DataFrame, deltadays: int | str) -> pd.DataFrame:
@@ -60,7 +61,9 @@ def append_dataframe(
     df = df.pipe(add_datetime, 0).pipe(add_sport, sport).pipe(add_during, during)
     ws.set_dataframe(df, start=start_cell(ws), copy_head=False)
     client.load_table_from_dataframe(
-        df, f"sport-lottery-database.playsports.{table_id}"
+        df,
+        f"sport-lottery-database.playsports.{table_id}",
+        job_config=schema.set_job_config(schema.pred_schema),
     ).result()
     return None
 
