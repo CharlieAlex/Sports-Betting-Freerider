@@ -54,14 +54,14 @@ def linebot_main(target, during, target_num, *mail_accounts):
     print("寄送郵件完畢")
 
     try:
-        _, _, total_sheet, mainpush_sheet = open_gsheet(
+        total_sheet, mainpush_sheet = open_gsheet(
             key_path=gs_key,
             database_url=database_url,
         )
         client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
     except Exception as e:
         print(e)
-        return "打開伺服器出錯"
+        return "連接Google服務出錯"
 
     try:
         (

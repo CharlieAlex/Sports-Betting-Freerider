@@ -46,11 +46,9 @@ def drop_NA(df: pd.DataFrame) -> pd.DataFrame:
 
 def open_gsheet(key_path: str, database_url: str) -> (Worksheet, Worksheet):
     sh = pygsheets.authorize(service_account_file=key_path).open_by_url(database_url)
-    board_sheet = sh.worksheet_by_title("leaderboard")
-    pred_sheet = sh.worksheet_by_title("prediction")
     total_sheet = sh.worksheet_by_title("total")
     mainpush_sheet = sh.worksheet_by_title("main_push")
-    return board_sheet, pred_sheet, total_sheet, mainpush_sheet
+    return total_sheet, mainpush_sheet
 
 
 def start_cell(ws: Worksheet) -> str:
