@@ -127,6 +127,9 @@ def echo_text(event):
     except Exception as e:
         sent_message = TextSendMessage(text=str(e))
 
+    if not isinstance(sent_message, (TextSendMessage, StickerSendMessage)):
+        sent_message = TextSendMessage(text="發生未知錯誤")
+
     line_bot_api.reply_message(event.reply_token, sent_message)
 
 
