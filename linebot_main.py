@@ -53,31 +53,39 @@ def linebot_main(target, during, target_num, *mail_accounts):
         [gmail_machine.send_mail(account) for account in mail_accounts]
     print("寄送郵件完畢")
 
-    _, _, total_sheet, mainpush_sheet = open_gsheet(
-        key_path="/etc/secrets/g-sheet.json",
-        database_url=database_url,
-    )
-    client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
+    try:
+        _, _, total_sheet, mainpush_sheet = open_gsheet(
+            key_path=gs_key,
+            database_url=database_url,
+        )
+        client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
+    except Exception as e:
+        print(e)
+        return "打開伺服器出錯"
 
-    (
-        data["mainpush"]
-        .pipe(add_rank)
-        .pipe(add_datetime, 0)
-        .pipe(add_sport, target)
-        .pipe(add_during, during)
-        .pipe(upload_gsheet, mainpush_sheet)
-        .pipe(upload_bigquery, client, "main_push")
-    )
-    (
-        data["total"]
-        .pipe(add_rank)
-        .pipe(add_datetime, 0)
-        .pipe(add_sport, target)
-        .pipe(add_during, during)
-        .pipe(upload_gsheet, total_sheet)
-        .pipe(upload_bigquery, client, "total")
-    )
-    print("資料上傳完畢")
+    try:
+        (
+            data["mainpush"]
+            .pipe(add_rank)
+            .pipe(add_datetime, 0)
+            .pipe(add_sport, target)
+            .pipe(add_during, during)
+            .pipe(upload_gsheet, mainpush_sheet)
+            .pipe(upload_bigquery, client, "main_push")
+        )
+        (
+            data["total"]
+            .pipe(add_rank)
+            .pipe(add_datetime, 0)
+            .pipe(add_sport, target)
+            .pipe(add_during, during)
+            .pipe(upload_gsheet, total_sheet)
+            .pipe(upload_bigquery, client, "total")
+        )
+        print("資料上傳完畢")
+    except Exception as e:
+        print(e)
+        return "資料上傳錯誤"
 
     if data["total"]["game"].isna().any():
         return "有對戰資料缺漏，請前往雲端工作表查看"
@@ -126,9 +134,6 @@ def echo_text(event):
             sent_message = StickerSendMessage(package_id="6359", sticker_id="11069851")
     except Exception as e:
         sent_message = TextSendMessage(text=str(e))
-
-    if not isinstance(sent_message, (TextSendMessage, StickerSendMessage)):
-        sent_message = TextSendMessage(text="發生未知錯誤")
 
     line_bot_api.reply_message(event.reply_token, sent_message)
 
