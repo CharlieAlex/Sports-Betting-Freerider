@@ -70,6 +70,7 @@ def result_main(target, during, target_num, is_gc, gs_key, bq_key):
         .pipe(add_sport, target)
         .pipe(add_during, during)
         .pipe(sort_result)
+        .pipe(drop_NA)
     )
     print("資料整理完畢")
 

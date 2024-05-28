@@ -40,6 +40,10 @@ def sort_result(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def drop_NA(df: pd.DataFrame) -> pd.DataFrame:
+    return df.dropna(subset=["game", "prediction"])
+
+
 def open_gsheet(key_path: str, database_url: str) -> (Worksheet, Worksheet):
     sh = pygsheets.authorize(service_account_file=key_path).open_by_url(database_url)
     board_sheet = sh.worksheet_by_title("leaderboard")
@@ -55,17 +59,28 @@ def start_cell(ws: Worksheet) -> str:
     return "A" + str(current_rows + 2)
 
 
-def append_dataframe(
-    df: pd.DataFrame, ws: Worksheet, sport: str, during: str, client, table_id: str
-) -> None:
-    df = df.pipe(add_datetime, 0).pipe(add_sport, sport).pipe(add_during, during)
-    ws.set_dataframe(df, start=start_cell(ws), copy_head=False)
-    client.load_table_from_dataframe(
-        df,
-        f"sport-lottery-database.playsports.{table_id}",
-        job_config=schema.set_job_config(schema.pred_schema),
-    ).result()
-    return None
+def upload_gsheet(df: pd.DataFrame, ws: Worksheet) -> pd.DataFrame:
+    try:
+        ws.set_dataframe(df, start=start_cell(ws), copy_head=False)
+        print("資料上傳至 Google Sheet")
+    except Exception as e:
+        print("Google Sheet 上傳失敗")
+        print(e)
+    return df
+
+
+def upload_bigquery(df: pd.DataFrame, client, table_id: str) -> pd.DataFrame:
+    try:
+        client.load_table_from_dataframe(
+            df,
+            f"sport-lottery-database.playsports.{table_id}",
+            job_config=schema.set_job_config(schema.pred_schema),
+        ).result()
+        print("資料上傳至 Google Cloud")
+    except Exception as e:
+        print("Google Cloud 上傳失敗")
+        print(e)
+    return df
 
 
 if __name__ == "__main__":

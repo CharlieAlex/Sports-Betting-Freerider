@@ -58,21 +58,26 @@ def linebot_main(target, during, target_num, *mail_accounts):
         database_url=database_url,
     )
     client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
-    # append_dataframe(data['leaderboard'], board_sheet, target, during)
-    # append_dataframe(data['prediction'], pred_sheet, target, during)
-    append_dataframe(
-        data["mainpush"].pipe(add_rank),
-        mainpush_sheet,
-        target,
-        during,
-        client,
-        "main_push",
+
+    (
+        data["mainpush"]
+        .pipe(add_rank)
+        .pipe(add_datetime, 0)
+        .pipe(add_sport, target)
+        .pipe(add_during, during)
+        .pipe(upload_gsheet, mainpush_sheet)
+        .pipe(upload_bigquery, client, "main_push")
     )
-    append_dataframe(
-        data["total"].pipe(add_rank), total_sheet, target, during, client, "total"
+    (
+        data["total"]
+        .pipe(add_rank)
+        .pipe(add_datetime, 0)
+        .pipe(add_sport, target)
+        .pipe(add_during, during)
+        .pipe(upload_gsheet, total_sheet)
+        .pipe(upload_bigquery, client, "total")
     )
-    print("資料上傳至 Google Sheet")
-    print("資料上傳至 Google Cloud")
+    print("資料上傳完畢")
 
     if data["total"]["game"].isna().any():
         return "有對戰資料缺漏，請前往雲端工作表查看"
