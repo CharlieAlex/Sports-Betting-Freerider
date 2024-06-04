@@ -13,8 +13,7 @@ st.set_page_config(
 )
 st.title("Sports-Betting-Freerider")
 helper.make_bq_key()
-bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/bq-key.json"
-client = bq.Client.from_service_account_json(json_credentials_path=bq_key)
+client = bq.Client.from_service_account_json(json_credentials_path="bq-key.json")
 rawdf = query_bq_table.load_data(client, helper.all_3months_query)
 
 
