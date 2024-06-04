@@ -6,14 +6,14 @@ from google.cloud import bigquery as bq
 import datetime as dt
 from dateutil import relativedelta as dtr
 
-
 # streamlit setting & GCP setting & load data
 st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 st.title("Sports-Betting-Freerider")
-bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/big-query.json"
+helper.make_bq_key()
+bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/bq-key.json"
 client = bq.Client.from_service_account_json(json_credentials_path=bq_key)
 rawdf = query_bq_table.load_data(client, helper.all_3months_query)
 
