@@ -22,6 +22,23 @@ pred_schema = [
     bigquery.SchemaField("during", "STRING", mode="NULLABLE"),
 ]
 
+pred_result_schema = [
+    bigquery.SchemaField("game", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("prediction", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("count", "INTEGER", mode="NULLABLE"),
+    bigquery.SchemaField("rank", "INTEGER", mode="NULLABLE"),
+    bigquery.SchemaField("date", "DATE", mode="REQUIRED"),
+    bigquery.SchemaField("time", "TIME", mode="NULLABLE"),
+    bigquery.SchemaField("sport", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("during", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("result", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("outcome", "STRING", mode="NULLABLE"),
+]
+
+date_partitioning = bigquery.TimePartitioning(
+    type_=bigquery.TimePartitioningType.DAY, field="date"
+)
+
 
 def set_job_config(schema: list):
     return bigquery.LoadJobConfig(
