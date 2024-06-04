@@ -13,3 +13,4 @@ lxml
 google-cloud-bigquery
 pyarrow
 db-dtypes
+plotly
