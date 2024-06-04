@@ -1,8 +1,15 @@
 # Import Packages
-from function.config import during_list, img_url_dict, help_text
-from function.linebot_config import *
-from main import *
+import main
+from function import config
+from function import linebot_config
+from function import gmail as gm
+from function import gsheet as gs
+from function import data_process as dp
+import os
 import re
+import pytz
+from datetime import datetime
+from google.cloud import bigquery as bq
 from linebot.models import (
     MessageEvent,
     TextSendMessage,
@@ -19,11 +26,11 @@ def linebot_main(target, during, target_num, *mail_accounts):
     bq_key = "/etc/secrets/big-query.json"
 
     if re.match(r"^yesterday|.*daysAgo$", during):
-        result_main(
+        main.result_main(
             target, during, target_num, is_gc=True, gs_key=gs_key, bq_key=bq_key
         )
         return "已完成結果搜集，請前往雲端工作表查看"
-    if during not in during_list:
+    if during not in config.during_list:
         return "資料時間範圍有誤，請輸入 help 查看指令格式"
     for account in mail_accounts:
         if not re.fullmatch(
@@ -34,10 +41,10 @@ def linebot_main(target, during, target_num, *mail_accounts):
 
     taipei_timezone = pytz.timezone("Asia/Taipei")
     today = datetime.now(taipei_timezone).strftime("%Y%m%d")
-    leaderboard, prediction = main(target, during, target_num, is_gc=True)
+    leaderboard, prediction = main.main(target, during, target_num, is_gc=True)
     print("爬蟲完畢")
 
-    output = Output_maker(leaderboard, prediction)
+    output = dp.Output_maker(leaderboard, prediction)
     data = {
         "leaderboard": leaderboard,
         "prediction": prediction,
@@ -46,7 +53,7 @@ def linebot_main(target, during, target_num, *mail_accounts):
     }
     print("資料整理完畢")
 
-    gmail_machine = Gmail_machine(target, today, data)
+    gmail_machine = gm.Gmail_machine(target, today, data)
     if not mail_accounts:
         gmail_machine.send_mail(os.getenv("Bro_Account"))
     else:
@@ -54,11 +61,11 @@ def linebot_main(target, during, target_num, *mail_accounts):
     print("寄送郵件完畢")
 
     try:
-        total_sheet, mainpush_sheet = open_gsheet(
+        total_sheet, mainpush_sheet = gs.open_gsheet(
             key_path=gs_key,
-            database_url=database_url,
+            database_url=config.database_url,
         )
-        client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
+        client = bq.Client.from_service_account_json(json_credentials_path=bq_key)
     except Exception as e:
         print(e)
         return "連接Google服務出錯"
@@ -66,21 +73,21 @@ def linebot_main(target, during, target_num, *mail_accounts):
     try:
         (
             data["mainpush"]
-            .pipe(add_rank)
-            .pipe(add_datetime, 0)
-            .pipe(add_sport, target)
-            .pipe(add_during, during)
-            .pipe(upload_gsheet, mainpush_sheet)
-            .pipe(upload_bigquery, client, "main_push")
+            .pipe(gs.add_rank)
+            .pipe(gs.add_datetime, 0)
+            .pipe(gs.add_sport, target)
+            .pipe(gs.add_during, during)
+            .pipe(gs.upload_gsheet, mainpush_sheet)
+            .pipe(gs.upload_bigquery, client, "mainpush")
         )
         (
             data["total"]
-            .pipe(add_rank)
-            .pipe(add_datetime, 0)
-            .pipe(add_sport, target)
-            .pipe(add_during, during)
-            .pipe(upload_gsheet, total_sheet)
-            .pipe(upload_bigquery, client, "total")
+            .pipe(gs.add_rank)
+            .pipe(gs.add_datetime, 0)
+            .pipe(gs.add_sport, target)
+            .pipe(gs.add_during, during)
+            .pipe(gs.upload_gsheet, total_sheet)
+            .pipe(gs.upload_bigquery, client, "total")
         )
         print("資料上傳完畢")
     except Exception as e:
@@ -93,11 +100,11 @@ def linebot_main(target, during, target_num, *mail_accounts):
     return "已完成爬蟲，請前往收信"
 
 
-def time_template(command):
+def menu_message(command):
     msg = TemplateSendMessage(
         alt_text="ButtonsTemplate",
         template=ButtonsTemplate(
-            thumbnail_image_url=img_url_dict[command],
+            thumbnail_image_url=config.img_url_dict[command],
             title=command,
             text="請選擇主推榜時間範圍",
             actions=[
@@ -111,16 +118,17 @@ def time_template(command):
     return msg
 
 
-@handler.add(MessageEvent, message=TextMessage)
+@linebot_config.handler.add(MessageEvent, message=TextMessage)
 def echo_text(event):
     received_message = event.message.text
     rm_list = received_message.split()
     target = rm_list[0]
+    sent_message = "最後回傳的訊息內容"
 
     try:
-        if target in alliance_dict.keys():
+        if target in config.alliance_dict.keys():
             if len(rm_list) == 1:
-                sent_message = time_template(target)
+                sent_message = menu_message(target)
             elif len(rm_list) == 2:
                 sent_message = TextSendMessage(
                     text="少輸入一個參數，請輸入 help 查看指令格式"
@@ -129,15 +137,15 @@ def echo_text(event):
                 result_text = linebot_main(*rm_list)
                 sent_message = TextSendMessage(text=result_text)
         elif target == "help":
-            sent_message = TextSendMessage(text=help_text)
+            sent_message = TextSendMessage(text=config.help_text)
         else:
             sent_message = StickerSendMessage(package_id="6359", sticker_id="11069851")
     except Exception as e:
         sent_message = TextSendMessage(text=str(e))
 
-    line_bot_api.reply_message(event.reply_token, sent_message)
+    linebot_config.line_bot_api.reply_message(event.reply_token, sent_message)
 
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    linebot_config.app.run(host="0.0.0.0", port=port)

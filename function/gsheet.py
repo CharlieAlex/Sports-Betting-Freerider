@@ -44,7 +44,7 @@ def drop_NA(df: pd.DataFrame) -> pd.DataFrame:
     return df.dropna(subset=["game", "prediction"])
 
 
-def open_gsheet(key_path: str, database_url: str) -> (Worksheet, Worksheet):
+def open_gsheet(key_path: str, database_url: str) -> tuple[Worksheet, Worksheet]:
     sh = pygsheets.authorize(service_account_file=key_path).open_by_url(database_url)
     total_sheet = sh.worksheet_by_title("total")
     mainpush_sheet = sh.worksheet_by_title("main_push")
@@ -82,14 +82,13 @@ def upload_bigquery(df: pd.DataFrame, client, table_id: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    key_path = "/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json"
+    gs_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/g-sheet.json"
     database_url = "https://docs.google.com/spreadsheets/d/1IcTCgwnIk_EKnqRdBYK7-MGfxiTrxbTnm3-89Fc76X4/edit?usp=sharing"
 
     target = "NBA"
     df = pd.read_csv(
         "/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata/prediction_NBA_20231207.csv"
     )
-    raw_sheet, total_sheet, mainpush_sheet = open_gsheet(key_path, database_url)
-    append_dataframe(df, raw_sheet, target)
-    append_dataframe(df, mainpush_sheet, target)
-    append_dataframe(df, total_sheet, target)
+    total_sheet, mainpush_sheet = open_gsheet(
+        key_path=gs_key, database_url=database_url
+    )

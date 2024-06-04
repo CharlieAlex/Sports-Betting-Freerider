@@ -1,7 +1,7 @@
-from function.sport_crawler import Leaderboard, Rank_user
-from function.data_process import Output_maker
-from function.gmail import Gmail_machine
-from function.gsheet import *
+from function import gmail as gm
+from function import sport_crawler as sc
+from function import data_process as dp
+from function import gsheet as gs
 from function.config import rawdata_path, workdata_path, database_url, alliance_dict
 import os
 import re
@@ -26,7 +26,7 @@ def main(target, during, target_num, is_gc):
     leaderboard = pd.DataFrame()
     for page in range(2):
         try:
-            rank_list = Leaderboard(alliance_dict[target], during, page, gameday)
+            rank_list = sc.Leaderboard(alliance_dict[target], during, page, gameday)
             tempboard = rank_list.dataframe
             tempboard = tempboard[tempboard["mode"] == "國際盤賽事"]
             leaderboard = pd.concat([leaderboard, tempboard], ignore_index=True)
@@ -39,7 +39,7 @@ def main(target, during, target_num, is_gc):
     collected_count = 0
     for i in trange(crawl_num):
         try:
-            user = Rank_user(leaderboard.iloc[i])
+            user = sc.Rank_user(leaderboard.iloc[i])
             all_prediction = pd.concat([all_prediction, user.prediction])
             collected_count = (
                 collected_count + 1 if user.prediction.shape[0] > 0 else collected_count
@@ -59,24 +59,22 @@ def result_main(target, during, target_num, is_gc, gs_key, bq_key):
     leaderboard, prediction = main(target, during, target_num, is_gc)
     print("爬蟲完畢")
 
-    output = Output_maker(leaderboard, prediction)
+    output = dp.Output_maker(leaderboard, prediction)
     data = {"result": output.result_summary}
-    deltadays = (
-        1 if re.match(r"^yesterday$", during) else int(re.search(r"\d+", during)[0])
-    )
+    deltadays = sc.parse_during(during)
     df = (
         data["result"]
-        .pipe(add_datetime, deltadays)
-        .pipe(add_sport, target)
-        .pipe(add_during, during)
-        .pipe(sort_result)
-        .pipe(drop_NA)
+        .pipe(gs.add_datetime, deltadays)
+        .pipe(gs.add_sport, target)
+        .pipe(gs.add_during, during)
+        .pipe(gs.sort_result)
+        .pipe(gs.drop_NA)
     )
     print("資料整理完畢")
 
-    sh = pygsheets.authorize(service_account_file=gs_key).open_by_url(database_url)
+    sh = gs.pygsheets.authorize(service_account_file=gs_key).open_by_url(database_url)
     result_sheet = sh.worksheet_by_title("result")
-    result_sheet.set_dataframe(df, start=start_cell(result_sheet), copy_head=False)
+    result_sheet.set_dataframe(df, start=gs.start_cell(result_sheet), copy_head=False)
     print("資料上傳至 Google Sheet")
 
     client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
@@ -103,13 +101,16 @@ def enter_command():
 if __name__ == "__main__":
     # NBA season 3
     load_dotenv("/Users/alexlo/Desktop/Project/Others/App_Setting/.env")
-    key_path_local = "/Users/alexlo/Desktop/Project/Sport_Lottery/sport-lottery-database-a36862122f3a.json"
+    gs_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/g-sheet.json"
+    bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/big-query.json"
 
     # 蒐集資料
     target, during, target_num = enter_command()
     print("開始爬蟲!")
-    if re.match(r"^yesterday|.*daysAgo$", during):
-        result_main(target, during, target_num, is_gc=True, key_path=key_path_local)
+    if during is not None and re.match(r"^yesterday|.*daysAgo$", during):
+        result_main(
+            target, during, target_num, is_gc=False, gs_key=gs_key, bq_key=bq_key
+        )
     else:
         taipei_timezone = pytz.timezone("Asia/Taipei")
         today = datetime.now(taipei_timezone).strftime("%Y%m%d")
@@ -123,7 +124,7 @@ if __name__ == "__main__":
         print("爬蟲完畢")
 
         # 統計結果
-        output = Output_maker(leaderboard, prediction)
+        output = dp.Output_maker(leaderboard, prediction)
         output.mainpush_summary.to_csv(
             f"{workdata_path}/mainpush_{target}_{today}.csv", index=False
         )
@@ -138,19 +139,6 @@ if __name__ == "__main__":
         }
 
         # 寄送郵件
-        gmail_machine = Gmail_machine(target, today, data)
+        gmail_machine = gm.Gmail_machine(target, today, data)
         gmail_machine.send_mail(os.getenv("Alex_Account"))
         print("寄送郵件完畢!")
-
-        # 儲存資料
-        board_sheet, pred_sheet, total_sheet, mainpush_sheet = open_gsheet(
-            key_path=key_path_local,
-            database_url=database_url,
-        )
-        append_dataframe(data["leaderboard"], board_sheet, target, during)
-        append_dataframe(data["prediction"], pred_sheet, target, during)
-        append_dataframe(
-            data["mainpush"].pipe(add_rank), mainpush_sheet, target, during
-        )
-        append_dataframe(data["total"].pipe(add_rank), total_sheet, target, during)
-        print("資料儲存完畢")
