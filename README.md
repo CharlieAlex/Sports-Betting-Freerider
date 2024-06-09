@@ -10,6 +10,36 @@
   <img src="images/website.png?raw=true" alt="玩運彩網站" style="width: 100%;">
 </div>
 
+## 專案流程圖
+
+```mermaid
+flowchart LR
+	ios[ios shortcut]
+	lb[linebot]
+	wc[web crawler]
+	ws[worksheet]
+	db[database]
+	gas[apps scripts]
+	st[streamlit]
+	sq[scheduled query]
+	ios --> lb
+	subgraph Render
+		lb -.-> wc
+		lb <-.- wc
+	end
+	lb --> ws & db
+	subgraph Big Query
+		db -.-> sq
+		db <-.- sq
+	end
+	subgraph Google Sheet for backup
+		ws -.-> gas
+		ws <-.- gas
+	end
+	subgraph Web API
+		db --> st
+	end
+```
 
 ## 資料蒐集
 
@@ -46,12 +76,25 @@
 
 <div style="display: flex;">
     <img src="images/shortcut_send.png?raw=true" alt="捷徑" style="width: 33%;">
-    <img src="images/shortcut_auto.png?raw=true" alt="自動化" style="width: 33%;">
+    <img src="images/linebot_cron.jpeg?raw=true" alt="自動化" style="width: 36%;">
 </div>
 
 ## 資料儲存
 
-### Google Sheet 作為資料庫
+### Big Query 作為資料庫以及自動化處理
+
+本專案將爬蟲的結果儲存至 Big Query 的 database，主要儲存三種 table:
+
+<img src="images/bigquery_schema.png?raw=true" alt="big query 架構" style="width: 40%;">
+
+1. 玩家預測表: total, mainpush
+2. 比賽結果表: result
+3. 結合表: total_result, mainpush_result
+
+第三種表是每天定期將前兩種表的內容整合 (`left_join`) 並且進行更新 (append)，方便快速查閱資料。
+
+
+### Google Sheet 作為資料庫(舊版)
 
 將爬蟲結果直接從信箱讀取固然方便，但是不利於記錄與後續的分析，
 因此本專案又建立了一個 Google Sheet 表單作為資料庫，將爬蟲結果存放在此。
@@ -66,13 +109,32 @@
 
 <img src="images/winchart.png?raw=true" alt="勝率圖" style="width: 100%;">
 
-### Google Apps Script 進行自動化資料處理
+### Google Apps Script 進行自動化資料處理(舊版)
 
 原先對 Google Sheet 進行資料處理都是使用內建的函示如 `Match()`, `ArrayFormula()` 等，
 但是這些都會使表單的運作變得緩慢，因此本專案額外使用 Google Apps Script 來進行自動化資料處理，
 將原先的公式寫成 AppScript 程式碼，並且設定每天固定時間自動執行。
 
 <img src="images/appscript_auto.png?raw=true" alt="AppScript自動化" style="width: 100%;">
+
+
+## 資料視覺化
+
+### Streamlit 視覺化結果
+
+為了快速對長期的資料有即時全面的掌握，本專案使用 streamlit 架設了一個網站。
+
+其中包含一個簡單的 dashboard，比較當月的爬蟲結果趨勢:
+
+<img src="images/streamlit_dashboard.png?raw=true" alt="Dashboard" style="width: 100%;">
+
+以及能給定條件搜尋出近期的比賽預測與結果:
+
+<img src="images/streamlit_search.png?raw=true" alt="搜尋條件" style="width: 100%;">
+
+搜尋內容會先以圓餅圖快速呈現預測準確度，並以表格的方式列出結果：
+
+<img src="images/streamlit_result.png?raw=true" alt="搜尋結果" style="width: 100%;">
 
 ## 資料分析
 

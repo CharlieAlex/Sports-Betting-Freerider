@@ -7,3 +7,4 @@ test*
 g-sheet.json
 big-query.json
 bq-key.json
+.streamlit/
