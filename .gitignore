@@ -9,4 +9,5 @@ big-query.json
 bq-key.json
 .streamlit/
 gcp/*sql*
-
+.venv/
+TODO.md

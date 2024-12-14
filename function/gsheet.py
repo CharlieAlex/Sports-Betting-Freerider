@@ -82,12 +82,12 @@ def upload_bigquery(df: pd.DataFrame, client, table_id: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    gs_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/g-sheet.json"
+    gs_key = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/g-sheet.json"
     database_url = "https://docs.google.com/spreadsheets/d/1IcTCgwnIk_EKnqRdBYK7-MGfxiTrxbTnm3-89Fc76X4/edit?usp=sharing"
 
     target = "NBA"
     df = pd.read_csv(
-        "/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata/prediction_NBA_20231207.csv"
+        "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/rawdata/prediction_NBA_20231207.csv"
     )
     total_sheet, mainpush_sheet = open_gsheet(
         key_path=gs_key, database_url=database_url

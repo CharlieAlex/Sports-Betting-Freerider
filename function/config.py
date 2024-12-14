@@ -1,5 +1,5 @@
-rawdata_path = "/Users/alexlo/Desktop/Project/Sport_Lottery/rawdata"
-workdata_path = "/Users/alexlo/Desktop/Project/Sport_Lottery/workdata"
+rawdata_path = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/rawdata"
+workdata_path = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/workdata"
 database_url = "https://docs.google.com/spreadsheets/d/1IcTCgwnIk_EKnqRdBYK7-MGfxiTrxbTnm3-89Fc76X4/edit?usp=sharing"
 
 back_links = [
@@ -231,4 +231,4 @@ NPB_team = [
     "歐力士猛牛",
     "軟體銀行鷹",
 ]
-team_pattern = "|".join(NBA_team + NHL_team + MLB_team + NPB_team)
+team_pattern = "|".join(NBA_team + NHL_team + MLB_team + NPB_team + Korea_team)

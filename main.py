@@ -100,9 +100,9 @@ def enter_command():
 
 if __name__ == "__main__":
     # NBA season 3
-    load_dotenv("/Users/alexlo/Desktop/Project/Others/App_Setting/.env")
-    gs_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/g-sheet.json"
-    bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/big-query.json"
+    load_dotenv("/Users/weichun.lo/.config_alex/.env")
+    gs_key = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/g-sheet.json"
+    bq_key = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/big-query.json"
 
     # 蒐集資料
     target, during, target_num = enter_command()

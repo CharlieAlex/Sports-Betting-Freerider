@@ -19,7 +19,7 @@ class Gmail_machine:
         self.during = during
         self.data = data
         self.sender_account = os.getenv("Sender_Account")
-        self.sender_password = os.getenv("Sport_Lottery_Password")
+        self.sender_password = os.getenv("Sports-Betting-Freerider_Password")
 
     def data_to_html(self, col_name):
         return self.data[col_name].to_html(index=False).replace("\n", "")
@@ -82,9 +82,9 @@ class Gmail_machine:
 if __name__ == "__main__":
     from datetime import date
     from dotenv import load_dotenv
-    from config import rawdata_path, workdata_path
+    from config import rawdata_path,workdata_path
 
-    load_dotenv("/Users/alexlo/Desktop/Project/Others/App_Setting/.env")
+    load_dotenv("/Users/weichun.lo/.config_alex/.env")
 
     target = "NBA"
     during = date.today().strftime("%Y%m%d")

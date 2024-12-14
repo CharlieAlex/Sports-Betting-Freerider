@@ -4,7 +4,7 @@ import datetime
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    "/Users/alexlo/Desktop/Project/Sport_Lottery/big-query.json"
+    "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/big-query.json"
 )
 transfer_client = bigquery_datatransfer.DataTransferServiceClient()
 

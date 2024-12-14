@@ -18,7 +18,7 @@ def load_data(
 
 
 if "__name__" == "__main__":
-    bq_key = "/Users/alexlo/Desktop/Project/Sport_Lottery/big-query.json"
+    bq_key = "/Users/weichun.lo/Desktop/Project/Sports-Betting-Freerider/big-query.json"
 
     client = bigquery.Client.from_service_account_json(json_credentials_path=bq_key)
 

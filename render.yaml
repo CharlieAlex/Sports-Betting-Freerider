@@ -1,8 +1,8 @@
 services:
 - type: web
-  name: Sport_Lottery
+  name: Sports-Betting-Freerider
   env: python
-  repo: https://github.com/CharlieAlex/Sport_Lottery
+  repo: https://github.com/CharlieAlex/Sports-Betting-Freerider
   buildCommand: pip install -r requirements.txt
   startCommand: gunicorn linebot_main:app --timeout 300
   plan: free
