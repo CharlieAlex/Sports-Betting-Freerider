@@ -1,7 +1,7 @@
 # Import Packages
 import main
 from function import config
-from function import linebot_config
+from function.linebot_config import app, line_bot_api, handler
 from function import gmail as gm
 from function import gsheet as gs
 from function import data_process as dp
@@ -118,7 +118,7 @@ def menu_message(command):
     return msg
 
 
-@linebot_config.handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent, message=TextMessage)
 def echo_text(event):
     received_message = event.message.text
     rm_list = received_message.split()
@@ -143,9 +143,9 @@ def echo_text(event):
     except Exception as e:
         sent_message = TextSendMessage(text=str(e))
 
-    linebot_config.line_bot_api.reply_message(event.reply_token, sent_message)
+    line_bot_api.reply_message(event.reply_token, sent_message)
 
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    linebot_config.app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)
