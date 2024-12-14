@@ -231,4 +231,4 @@ NPB_team = [
     "歐力士猛牛",
     "軟體銀行鷹",
 ]
-team_pattern = "|".join(NBA_team + NHL_team + MLB_team + NPB_team)
+team_pattern = "|".join(NBA_team + NHL_team + MLB_team + NPB_team + Korea_team)
