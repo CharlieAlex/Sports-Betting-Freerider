@@ -1,5 +1,7 @@
 from .config import back_links
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from functools import cached_property
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
@@ -20,13 +22,25 @@ class Leaderboard:
         self.web_url = 'https://www.playsport.cc/'
         self.user_url = self.web_url + 'visit_member.php?visit='
         self.header = {'User-Agent':user_agent.random, 'Referer': random.choice(back_links)}
+
+        retry_strategy = Retry(
+            total=3,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
+            backoff_factor=1
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session = requests.Session()
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
+
         self.html_content = BeautifulSoup(self.crawl_content, 'html.parser')
 
     @cached_property
     def crawl_content(self):
         board_url = self.web_url + f'billboard/mainPrediction?during={self.during}&allianceid={self.alliance}&page={self.page}'
         print('向排行榜發送爬蟲要求!')
-        r = requests.get(url=board_url, headers=self.header)
+        r = self.session.get(url=board_url, headers=self.header)
         if r.status_code == 403:
             print('IP被ban了, GG...')
         return r.text
@@ -51,12 +65,24 @@ class Rank_user:
     def __init__(self, user_data) -> None:
         self.user_data = user_data
         self.header = {'User-Agent':user_agent.random, 'Referer': random.choice(back_links)}
+
+        retry_strategy = Retry(
+            total=3,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
+            backoff_factor=1
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session = requests.Session()
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
+
         self.html_content = BeautifulSoup(self.crawl_content, 'html.parser')
 
     @cached_property
     def crawl_content(self):
         print('向使用者頁面發送爬蟲要求!')
-        r = requests.get(url=self.user_data.linkUrl, headers=self.header)
+        r = self.session.get(url=self.user_data.linkUrl, headers=self.header)
         if r.status_code == 403:
             print('IP被ban了, GG...')
         return r.text
