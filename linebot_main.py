@@ -46,12 +46,16 @@ def linebot_main(target, during, target_num, *mail_accounts):
     }
     print("資料整理完畢")
 
-    gmail_machine = Gmail_machine(target, today, data)
-    if not mail_accounts:
-        gmail_machine.send_mail(os.getenv("Bro_Account"))
-    else:
-        [gmail_machine.send_mail(account) for account in mail_accounts]
-    print("寄送郵件完畢")
+    try:
+        gmail_machine = Gmail_machine(target, today, data)
+        if not mail_accounts:
+            gmail_machine.send_mail(os.getenv("Bro_Account"))
+        else:
+            [gmail_machine.send_mail(account) for account in mail_accounts]
+        print("寄送郵件完畢")
+    except Exception as e:
+        print(e)
+        return "寄送郵件出錯"
 
     try:
         total_sheet, mainpush_sheet = open_gsheet(
