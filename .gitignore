@@ -6,3 +6,7 @@ test*
 *.csv
 g-sheet.json
 big-query.json
+.streamlit/
+.venv/
+TODO.md
+bq-key.json
