@@ -55,7 +55,7 @@ def linebot_main(target, during, target_num, *mail_accounts):
         print("寄送郵件完畢")
     except Exception as e:
         print(e)
-        return "寄送郵件出錯"
+        # return "寄送郵件出錯"
 
     try:
         total_sheet, mainpush_sheet = open_gsheet(

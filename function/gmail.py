@@ -1,4 +1,5 @@
 import os
+from itsdangerous import exc
 import pandas as pd
 import smtplib
 from email.mime.text import MIMEText
@@ -20,10 +21,15 @@ class Gmail_machine:
         self.sender_password = os.getenv('Sport_Lottery_Password')
 
     def data_to_html(self, col_name):
-        return (self.data[col_name]
-            .to_html(index=False)
-            .replace('\n', '')
-        )
+        try:
+            return (self.data[col_name]
+                .to_html(index=False)
+                .replace('\n', '')
+            )
+        except Exception as e:
+            print(e)
+            return ""
+
 
     @property
     def mail_content(self):
@@ -57,25 +63,35 @@ class Gmail_machine:
         return MIMEText(str_, "html", "utf-8")
 
     def mail_attach(self, col_name):
-        attach_name = f'{col_name}_{self.target}_{self.during}.csv'
-        part_attach = MIMEApplication(df_to_csv(self.data[col_name]))
-        part_attach.add_header('Content-Disposition','attachment',filename=attach_name)
+        try:
+            attach_name = f'{col_name}_{self.target}_{self.during}.csv'
+            part_attach = MIMEApplication(df_to_csv(self.data[col_name]))
+            part_attach.add_header('Content-Disposition','attachment',filename=attach_name)
+        except Exception as e:
+            print(e)
         return part_attach
 
     def message_content(self, receiver_account):
-        msg = MIMEMultipart()
-        msg["From"] = self.sender_account
-        msg["To"] = receiver_account
-        msg["Subject"] = f'運彩預測 {self.target} {self.during}'
-        msg.attach(self.mail_content)
-        msg.attach(self.mail_attach('prediction'))
+        try:
+            msg = MIMEMultipart()
+            msg["From"] = self.sender_account
+            msg["To"] = receiver_account
+            msg["Subject"] = f'運彩預測 {self.target} {self.during}'
+            msg.attach(self.mail_content)
+            msg.attach(self.mail_attach('prediction'))
+        except Exception as e:
+            print(e)
         return msg
 
     def send_mail(self, receiver_account):
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465) #建立gmail連驗
-        server.login(self.sender_account, self.sender_password)
-        server.send_message(self.message_content(receiver_account))
-        server.close()
+        try:
+            server = smtplib.SMTP_SSL("smtp.gmail.com", 465) #建立gmail連驗
+            server.login(self.sender_account, self.sender_password)
+            server.send_message(self.message_content(receiver_account))
+            server.close()
+        except Exception as e:
+            print(e)
+
 
 if __name__ == '__main__':
     from datetime import date
